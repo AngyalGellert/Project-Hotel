@@ -2,6 +2,8 @@ package webshop;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.webshop.Customer;
+import org.webshop.CustomerCategory;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -20,7 +20,8 @@ CustomerCategory: Ez egy enum, SINGLE és VIP példányokkal létrehozva. Attrib
 - Egy metódus visszaadja a termékeket egy listában, ár szerint rendezve, legolcsóbbtól a legdrágábbig.
 - Egy metódus visszaadja a termékeket egy listában, név szerint ábécé sorrendbe rendezve.
 
-  CustomerService (vevőszolgálat): Attribútuma a vásárlók halmaza. Metódusai a következő funkciókat látják el:
+
+CustomerService (vevőszolgálat): Attribútuma a vásárlók halmaza. Metódusai a következő funkciókat látják el:
 
 - Vásárló hozzáadása (a metódus a vásárlót várja paraméterül).
 - Egy metódus visszaadja egy listában a paraméterként megadott kategóriájú vásárlókat.

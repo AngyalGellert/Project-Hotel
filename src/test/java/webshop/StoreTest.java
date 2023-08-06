@@ -2,6 +2,9 @@ package webshop;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.webshop.Product;
+import org.webshop.ProductCategory;
+import org.webshop.Store;
 
 import java.util.List;
 import java.util.Map;

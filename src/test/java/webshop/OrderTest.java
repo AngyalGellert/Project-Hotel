@@ -2,6 +2,10 @@ package webshop;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.webshop.Customer;
+import org.webshop.Order;
+import org.webshop.Product;
+import org.webshop.ProductCategory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
