@@ -14,6 +14,7 @@ public class AngularHotelApplication {
         SpringApplication.run(AngularHotelApplication.class, args);
     }
 
+    @Bean
     public ModelMapper modelMapper(){
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
