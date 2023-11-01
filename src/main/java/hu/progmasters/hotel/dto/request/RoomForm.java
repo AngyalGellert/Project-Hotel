@@ -1,4 +1,4 @@
-package hu.progmasters.hotel.dto;
+package hu.progmasters.hotel.dto.request;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

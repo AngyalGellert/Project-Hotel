@@ -1,9 +1,9 @@
-package hu.progmasters.hotel.dto;
+package hu.progmasters.hotel.dto.response;
 
 /**
  * Created by szfilep.
  */
-public class RoomDetails {
+public class RoomListItem {
 
     private Long id;
 
@@ -12,8 +12,6 @@ public class RoomDetails {
     private Integer numberOfBeds;
 
     private Integer pricePerNight;
-
-    private String description;
 
     private String imageUrl;
 
@@ -47,14 +45,6 @@ public class RoomDetails {
 
     public void setPricePerNight(Integer pricePerNight) {
         this.pricePerNight = pricePerNight;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getImageUrl() {

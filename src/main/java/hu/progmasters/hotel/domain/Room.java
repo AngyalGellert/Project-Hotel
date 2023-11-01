@@ -1,6 +1,6 @@
 package hu.progmasters.hotel.domain;
 
-import hu.progmasters.hotel.dto.RoomForm;
+import hu.progmasters.hotel.dto.request.RoomForm;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
