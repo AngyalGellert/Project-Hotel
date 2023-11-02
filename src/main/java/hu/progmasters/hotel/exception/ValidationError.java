@@ -11,9 +11,12 @@
 
 package hu.progmasters.hotel.exception;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class ValidationError {
     private List<CustomFieldError> fieldErrors = new ArrayList<>();
 
@@ -22,14 +25,8 @@ public class ValidationError {
         fieldErrors.add(error);
     }
 
-    public List<CustomFieldError> getFieldErrors() {
-        return fieldErrors;
-    }
 
-    public void setFieldErrors(List<CustomFieldError> customFieldErrors) {
-        this.fieldErrors = customFieldErrors;
-    }
-
+    @Data
     private static class CustomFieldError {
 
         private String field;
@@ -37,22 +34,6 @@ public class ValidationError {
 
         CustomFieldError(String field, String message) {
             this.field = field;
-            this.message = message;
-        }
-
-        public String getField() {
-            return field;
-        }
-
-        public void setField(String field) {
-            this.field = field;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
             this.message = message;
         }
     }
