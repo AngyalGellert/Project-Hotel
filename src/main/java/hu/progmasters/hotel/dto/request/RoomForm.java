@@ -1,10 +1,17 @@
 package hu.progmasters.hotel.dto.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RoomForm {
 
     @NotNull(message = "Room name must not be empty")
@@ -24,43 +31,5 @@ public class RoomForm {
     private String description;
     private String imageUrl;
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getNumberOfBeds() {
-        return numberOfBeds;
-    }
-
-    public void setNumberOfBeds(Integer numberOfBeds) {
-        this.numberOfBeds = numberOfBeds;
-    }
-
-    public Integer getPricePerNight() {
-        return pricePerNight;
-    }
-
-    public void setPricePerNight(Integer pricePerNight) {
-        this.pricePerNight = pricePerNight;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
 }

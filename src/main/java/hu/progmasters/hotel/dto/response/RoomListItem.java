@@ -1,8 +1,16 @@
 package hu.progmasters.hotel.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * Created by szfilep.
  */
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RoomListItem {
 
     private Long id;
@@ -15,43 +23,5 @@ public class RoomListItem {
 
     private String imageUrl;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getNumberOfBeds() {
-        return numberOfBeds;
-    }
-
-    public void setNumberOfBeds(Integer numberOfBeds) {
-        this.numberOfBeds = numberOfBeds;
-    }
-
-    public Integer getPricePerNight() {
-        return pricePerNight;
-    }
-
-    public void setPricePerNight(Integer pricePerNight) {
-        this.pricePerNight = pricePerNight;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
 }

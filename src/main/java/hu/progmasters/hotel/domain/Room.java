@@ -1,6 +1,8 @@
 package hu.progmasters.hotel.domain;
 
 import hu.progmasters.hotel.dto.request.RoomForm;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -13,6 +15,8 @@ import java.util.List;
  * Created by szfilep.
  */
 @Entity
+@Data
+@NoArgsConstructor
 public class Room {
 
     @Id
@@ -39,8 +43,6 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Reservation> reservations;
 
-    public Room() {
-    }
 
     public Room(RoomForm roomForm) {
         this.name = roomForm.getName();
@@ -48,61 +50,5 @@ public class Room {
         this.pricePerNight = roomForm.getPricePerNight();
         this.description = roomForm.getDescription();
         this.imageUrl = roomForm.getImageUrl();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getNumberOfBeds() {
-        return numberOfBeds;
-    }
-
-    public void setNumberOfBeds(Integer numberOfBeds) {
-        this.numberOfBeds = numberOfBeds;
-    }
-
-    public Integer getPricePerNight() {
-        return pricePerNight;
-    }
-
-    public void setPricePerNight(Integer pricePerNight) {
-        this.pricePerNight = pricePerNight;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
     }
 }
