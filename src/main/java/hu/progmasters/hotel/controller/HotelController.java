@@ -1,9 +1,7 @@
 package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
-import hu.progmasters.hotel.dto.request.RoomForm;
 import hu.progmasters.hotel.service.HotelService;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,17 +15,16 @@ import javax.validation.Valid;
 @RequestMapping("/api/hotels")
 public class HotelController {
 
-    private HotelService hotelService;
-    private final ModelMapper modelMapper;
+    private final HotelService hotelService;
 
-    public HotelController(HotelService hotelService, ModelMapper modelMapper) {
+
+    public HotelController(HotelService hotelService) {
         this.hotelService = hotelService;
-        this.modelMapper = modelMapper;
     }
 
     @PostMapping
     public ResponseEntity createHotel(@RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
-        hotelService.createHotel(hotelCreateRequest);
+       hotelService.createHotel(hotelCreateRequest);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
