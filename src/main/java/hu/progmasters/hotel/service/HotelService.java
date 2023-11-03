@@ -64,4 +64,12 @@ public class HotelService {
         item.setPricePerNight(room.getPricePerNight());
         item.setImageUrl(room.getImageUrl());
     }
+
+    public void deleteRoom(Long roomId) {
+        Optional<Room> roomToBeDeleted = roomRepository.findById(roomId);
+        if (roomToBeDeleted.isPresent()) {
+            roomToBeDeleted.get().setDeleted(true);
+            roomRepository.save(roomToBeDeleted.get());
+        }
+    }
 }

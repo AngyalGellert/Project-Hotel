@@ -43,6 +43,10 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Reservation> reservations;
 
+    private boolean isDeleted;
+
+    public Room() {
+    }
 
     public Room(RoomForm roomForm) {
         this.name = roomForm.getName();
@@ -50,5 +54,6 @@ public class Room {
         this.pricePerNight = roomForm.getPricePerNight();
         this.description = roomForm.getDescription();
         this.imageUrl = roomForm.getImageUrl();
+        this.isDeleted = false;
     }
 }
