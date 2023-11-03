@@ -42,4 +42,10 @@ public class RoomController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity deleteRoom(@PathVariable("id") Long roomId) {
+        hotelService.deleteRoom(roomId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 }

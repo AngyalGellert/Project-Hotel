@@ -39,6 +39,8 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Reservation> reservations;
 
+    private boolean isDeleted;
+
     public Room() {
     }
 
@@ -48,6 +50,7 @@ public class Room {
         this.pricePerNight = roomForm.getPricePerNight();
         this.description = roomForm.getDescription();
         this.imageUrl = roomForm.getImageUrl();
+        this.isDeleted = false;
     }
 
     public Long getId() {
@@ -104,5 +107,13 @@ public class Room {
 
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }
