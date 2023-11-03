@@ -88,5 +88,6 @@ public class HotelService {
         RoomDetailsWithReservations roomDetailsWithReservations = modelMapper.map(room, RoomDetailsWithReservations.class);
         roomDetailsWithReservations.setReservationDetails(reservationDetailsList);
         return roomDetailsWithReservations;
+
     }
 }
