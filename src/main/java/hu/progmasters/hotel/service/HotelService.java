@@ -74,7 +74,6 @@ public class HotelService {
     }
 
     public void createHotel(HotelCreateRequest hotelCreateRequest) {
-        Hotel hotelToBeSave = modelMapper.map(hotelCreateRequest, Hotel.class);
-        hotelRepository.save(hotelToBeSave);
+        hotelRepository.save(modelMapper.map(hotelCreateRequest, Hotel.class));
     }
 }
