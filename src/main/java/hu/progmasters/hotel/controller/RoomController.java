@@ -3,6 +3,7 @@ package hu.progmasters.hotel.controller;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
 import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.dto.request.RoomForm;
+import hu.progmasters.hotel.dto.response.RoomDetailsWithReservations;
 import hu.progmasters.hotel.dto.response.RoomListItem;
 import hu.progmasters.hotel.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,11 @@ public class RoomController {
     @GetMapping("/{id}")
     public RoomDetails roomDetail(@PathVariable("id") Long id) {
         return hotelService.getRoomDetails(id);
+    }
+
+    @GetMapping("/{id}/reservations")
+    public RoomDetailsWithReservations roomDetailWithReservation(@PathVariable("id") Long id) {
+        return hotelService.getRoomDetailsWithReservations(id);
     }
 
     @PostMapping

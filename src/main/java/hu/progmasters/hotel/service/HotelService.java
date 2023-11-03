@@ -1,9 +1,12 @@
 package hu.progmasters.hotel.service;
 
+import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
+import hu.progmasters.hotel.dto.response.ReservationDetails;
 import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.dto.request.RoomForm;
+import hu.progmasters.hotel.dto.response.RoomDetailsWithReservations;
 import hu.progmasters.hotel.dto.response.RoomListItem;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
@@ -22,8 +25,8 @@ import java.util.Optional;
 public class HotelService {
 
     private RoomRepository roomRepository;
+    private final ModelMapper modelMapper;
 
-    ModelMapper modelMapper;
     @Autowired
     public HotelService(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
@@ -107,4 +110,24 @@ public class HotelService {
     }
 
 
+
+    public Room findRoomById(Long roomId) {
+        Optional<Room> roomOptional = roomRepository.findById(roomId);
+        return roomOptional.orElseThrow(() -> new IllegalArgumentException("There is no Room for this id:" + roomId));
+    }
+
+    public RoomDetailsWithReservations getRoomDetailsWithReservations(Long roomId) {
+        Room room = findRoomById(roomId);
+        List<ReservationDetails> reservationDetailsList = new ArrayList<>();
+
+        for (Reservation reservation : room.getReservations()) {
+            ReservationDetails reservationDetails = modelMapper.map(reservation, ReservationDetails.class);
+            reservationDetailsList.add(reservationDetails);
+        }
+
+        RoomDetailsWithReservations roomDetailsWithReservations = modelMapper.map(room, RoomDetailsWithReservations.class);
+        roomDetailsWithReservations.setReservationDetails(reservationDetailsList);
+        return roomDetailsWithReservations;
+
+    }
 }
