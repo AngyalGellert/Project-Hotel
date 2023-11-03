@@ -45,8 +45,9 @@ public class Room {
 
     private boolean isDeleted;
 
-    public Room() {
-    }
+    @ManyToOne
+    private Hotel hotel;
+
 
     public Room(RoomForm roomForm) {
         this.name = roomForm.getName();
