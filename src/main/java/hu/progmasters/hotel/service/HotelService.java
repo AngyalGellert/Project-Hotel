@@ -84,13 +84,13 @@ public class HotelService {
     public RoomDetails updateRoomValues(@Valid RoomFormUpdate roomFormUpdate) {
         Optional<Room> room = roomRepository.findById(roomFormUpdate.getId());
         if (room.isPresent()) {
-            if (!roomFormUpdate.getName().isEmpty() || !roomFormUpdate.getName().isBlank()) {
+            if (!roomFormUpdate.getName().isEmpty() || !roomFormUpdate.getName().isBlank() || !roomFormUpdate.getName().equals(room.get().getName())) {
                 room.get().setName(roomFormUpdate.getName());
             }
-            if (roomFormUpdate.getNumberOfBeds() != room.get().getNumberOfBeds()){
+            if (roomFormUpdate.getNumberOfBeds() != room.get().getNumberOfBeds() || roomFormUpdate.getNumberOfBeds() != 0){
                 room.get().setNumberOfBeds(roomFormUpdate.getNumberOfBeds());
             }
-            if(roomFormUpdate.getPricePerNight() != room.get().getPricePerNight()){
+            if(roomFormUpdate.getPricePerNight() != room.get().getPricePerNight() || roomFormUpdate.getPricePerNight() != 0){
                 room.get().setPricePerNight(roomFormUpdate.getPricePerNight());
             }
             if(!roomFormUpdate.getDescription().equals(room.get().getDescription())){
