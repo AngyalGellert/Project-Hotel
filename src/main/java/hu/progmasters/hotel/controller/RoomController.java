@@ -1,5 +1,6 @@
 package hu.progmasters.hotel.controller;
 
+import hu.progmasters.hotel.dto.request.RoomFormUpdate;
 import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.dto.request.RoomForm;
 import hu.progmasters.hotel.dto.response.RoomListItem;
@@ -40,6 +41,11 @@ public class RoomController {
     public ResponseEntity createRoom(@RequestBody @Valid RoomForm roomForm) {
         hotelService.createRoom(roomForm);
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity <RoomDetails> updateRoom(@RequestBody @Valid RoomFormUpdate roomFormUpdate) {
+        return new ResponseEntity( hotelService.updateRoomValues(roomFormUpdate),HttpStatus.OK);
     }
 
 }
