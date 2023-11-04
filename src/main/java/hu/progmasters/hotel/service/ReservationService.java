@@ -22,8 +22,8 @@ public class ReservationService {
 
 
     public ReservationDetails recordsReservation(@Valid ReservationRequest reservation) {
-        Reservation newREservation = modelMapper.map(reservation, Reservation.class);
-        Reservation saved = reservationRepository.save(newREservation);
+        Reservation newReservation = modelMapper.map(reservation, Reservation.class);
+        Reservation saved = reservationRepository.save(newReservation);
         return modelMapper.map(saved, ReservationDetails.class);
     }
 }

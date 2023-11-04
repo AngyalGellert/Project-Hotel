@@ -35,4 +35,6 @@ public class Reservation {
     @ManyToOne
     private Room room;
 
+    private boolean deleted;
+
 }
