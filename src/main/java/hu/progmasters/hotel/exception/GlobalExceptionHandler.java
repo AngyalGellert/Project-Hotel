@@ -86,5 +86,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, status);
     }
 
+    @ExceptionHandler(ReservationNotFoundException.class)
+    public ResponseEntity<ApiError> handleReservationNotFound(ReservationNotFoundException reservationNotFoundException) {
+        logger.error("ReservationNotFound: ", reservationNotFoundException);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        ApiError body = new ApiError("Reservation_Not_Found", "Can't delete", reservationNotFoundException.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, status);
+
+    }
 }
 

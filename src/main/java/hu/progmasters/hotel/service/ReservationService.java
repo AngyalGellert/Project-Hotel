@@ -3,6 +3,7 @@ package hu.progmasters.hotel.service;
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.response.ReservationDetails;
+import hu.progmasters.hotel.exception.ReservationNotFoundException;
 import hu.progmasters.hotel.repository.ReservationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +34,9 @@ public class ReservationService {
         if (optionalReservation.isPresent()) {
             Reservation reservation = optionalReservation.get();
             reservation.setDeleted(true);
-            reservationRepository.save(reservation); //
+            reservationRepository.save(reservation);
         } else {
-            throw new RuntimeException("A foglalás nem található az adatbázisban");
+            throw new ReservationNotFoundException(id);
         }
     }
 }
