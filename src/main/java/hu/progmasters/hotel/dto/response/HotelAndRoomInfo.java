@@ -10,12 +10,12 @@ import javax.validation.constraints.Size;
 @Data
 public class HotelAndRoomInfo {
 
-    private Hotel hotel;
+    private String hotelName;
 
-    private Room room;
+    private Long roomId;
 
     public HotelAndRoomInfo(Hotel hotel, Room room) {
-        this.hotel = hotel;
-        this.room = room;
+        this.hotelName = hotel.getName();
+        this.roomId = room.getId();
     }
 }

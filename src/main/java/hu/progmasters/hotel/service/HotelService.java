@@ -32,8 +32,8 @@ public class HotelService {
 
 
     public HotelAndRoomInfo addRoomToHotel(HotelAndRoom hotelAndRoom) {
-        Hotel hotel = hotelRepository.findById(hotelAndRoom.getHotelId()).orElseThrow(() -> new IllegalArgumentException("There is no Hotel for this id:" + hotelAndRoom.getHotelId()));
-        Room room =  roomRepository.findById(hotelAndRoom.getRoomId()).orElseThrow(() -> new IllegalArgumentException("There is no Room for this id:" + hotelAndRoom.getRoomId()));
+        Hotel hotel = hotelRepository.findById(hotelAndRoom.getHotelId()).orElseThrow(() -> new HotelNotFoundException(hotelAndRoom.getHotelId()));
+        Room room =  roomRepository.findById(hotelAndRoom.getRoomId()).orElseThrow(() -> new RoomNotFoundException(hotelAndRoom.getRoomId()));
         room.setHotel(hotel);
         roomRepository.save(room);
         return new HotelAndRoomInfo(hotel, room);
