@@ -1,6 +1,8 @@
 package hu.progmasters.hotel.controller;
 
+import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.service.HotelService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,13 @@ public class HotelController {
        hotelService.createHotel(hotelCreateRequest);
         return new ResponseEntity(HttpStatus.CREATED);
     }
+
+    @PostMapping("/addroom")
+    public ResponseEntity<HotelAndRoomInfo> addRoomToHotel(@RequestBody @Valid HotelAndRoom hotelAndRoom){
+        HotelAndRoomInfo hotelAndRoomInfo = hotelService.addRoomToHotel(hotelAndRoom);
+        return new ResponseEntity(hotelAndRoomInfo, HttpStatus.OK);
+    }
+
 
 
 }
