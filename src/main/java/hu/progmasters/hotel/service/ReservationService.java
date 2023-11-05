@@ -36,7 +36,7 @@ public class ReservationService {
             reservation.setDeleted(true);
             reservationRepository.save(reservation);
         } else {
-            throw new ReservationNotFoundException(id);
+            throw new ReservationNotFoundException();
         }
     }
 }
