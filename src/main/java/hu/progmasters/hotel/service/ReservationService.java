@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -25,5 +26,16 @@ public class ReservationService {
         Reservation newReservation = modelMapper.map(reservation, Reservation.class);
         Reservation saved = reservationRepository.save(newReservation);
         return modelMapper.map(saved, ReservationDetails.class);
+    }
+
+    public void reservationDelete(Long id) {
+        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
+        if (optionalReservation.isPresent()) {
+            Reservation reservation = optionalReservation.get();
+            reservation.setDeleted(true);
+            reservationRepository.save(reservation); //
+        } else {
+            throw new RuntimeException("A foglalás nem található az adatbázisban");
+        }
     }
 }

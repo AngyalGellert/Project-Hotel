@@ -6,10 +6,7 @@ import hu.progmasters.hotel.service.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -25,9 +22,15 @@ public class ReservationController {
 
     @PostMapping()
     public ResponseEntity<ReservationDetails> save(@Valid @RequestBody ReservationRequest reservationRequest) {
-        log.info("Http request, POST /api/dwarves, body: " + reservationRequest.toString());
+        log.info("Http request, POST /api/reservation, body: " + reservationRequest.toString());
         ReservationDetails reservationDetails = reservationService.recordsReservation(reservationRequest);
         return new ResponseEntity<>(reservationDetails, HttpStatus.CREATED);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        log.info("Http request, DELETE /api/reservation/{Id} with variable: " + id);
+        reservationService.reservationDelete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
