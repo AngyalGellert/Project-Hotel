@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 @Data
@@ -11,8 +12,8 @@ public class ReservationRequest {
 
     @NotNull
     private String guestName;
-    @Past
+    @PastOrPresent
     private LocalDate startDate;
-    @Past
+    @PastOrPresent
     private LocalDate endDate;
 }

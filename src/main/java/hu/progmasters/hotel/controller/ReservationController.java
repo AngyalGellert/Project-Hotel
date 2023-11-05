@@ -20,7 +20,7 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<ReservationDetails> save(@Valid @RequestBody ReservationRequest reservationRequest) {
         log.info("Http request, POST /api/reservation, body: " + reservationRequest.toString());
         ReservationDetails reservationDetails = reservationService.recordsReservation(reservationRequest);
