@@ -15,16 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class HotelService {
 
     private final HotelRepository hotelRepository;
-
     private final RoomRepository roomRepository;
     private final ModelMapper modelMapper;
-
 
     public HotelService(HotelRepository hotelRepository, RoomRepository roomRepository) {
         this.hotelRepository = hotelRepository;
@@ -38,26 +35,24 @@ public class HotelService {
 
 
     public List<RoomDetails> listAllRoomsOfHotel(Long hotelId) {
-        List<Room> rooms = roomRepository.findAllRoomsFromHotel(hotelId);
-        List<RoomDetails> result = new ArrayList<>();
-        if (rooms.isEmpty() || checkIfHotelExistsById(hotelId)) {
+        Hotel hotel = findHotelById(hotelId);
+        List<Room> rooms = roomRepository.findAllAvailableRoomsFromHotel(hotelId);
+
+        if (hotel == null) {
+            throw new HotelNotFoundException(hotelId);
+        } else if (rooms.isEmpty()) {
             throw new HotelHasNoRoomsException(hotelId);
         } else {
+            List<RoomDetails> result = new ArrayList<>();
             for (Room room : rooms) {
-                if (!room.isDeleted()) {
-                    result.add(modelMapper.map(room, RoomDetails.class));
-                }
+                result.add(modelMapper.map(room, RoomDetails.class));
             }
+            return result;
         }
-        return result;
     }
 
-    private boolean checkIfHotelExistsById(Long hotelId) {
-        findHotelById(hotelId);
-        return false;
-    }
 
-    public Hotel findHotelById(Long hotelId){
+    public Hotel findHotelById(Long hotelId) {
         Optional<Hotel> hotel = hotelRepository.findById(hotelId);
         return hotel.orElseThrow(() -> new HotelNotFoundException(hotelId));
     }

@@ -40,6 +40,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ValidationError> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         logger.error("A validation error occurred: ", ex);
         BindingResult result = ex.getBindingResult();
+
         List<FieldError> fieldErrors = result.getFieldErrors();
 
         return new ResponseEntity<>(processFieldErrors(fieldErrors), HttpStatus.BAD_REQUEST);
@@ -54,6 +55,23 @@ public class GlobalExceptionHandler {
 
         return validationError;
     }
+
+    @ExceptionHandler(HotelHasNoRoomsException.class)
+    public ResponseEntity<ApiError> handleHotelHasNoRoomsException(HotelHasNoRoomsException exception){
+        logger.error("Hotel has no rooms", exception);
+
+        ApiError result = new ApiError("NO_ROOMS", "This Hotel has no available rooms", exception.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(HotelNotFoundException.class)
+    public ResponseEntity<ApiError> handleHotelNotFoundException(HotelNotFoundException exception){
+        logger.error("fasza");
+        ApiError result = new ApiError("HOTEL_NOT_FOUND", "Hotel was not found in our database", exception.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(JsonParseException.class)
     public ResponseEntity<ApiError> handleJsonParseException(JsonParseException ex) {
