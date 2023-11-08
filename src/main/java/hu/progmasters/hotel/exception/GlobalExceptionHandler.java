@@ -58,8 +58,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HotelHasNoRoomsException.class)
     public ResponseEntity<ApiError> handleHotelHasNoRoomsException(HotelHasNoRoomsException exception){
-        logger.error("Hotel has no rooms", exception);
-
+        logger.error(exception.getMessage());
         ApiError result = new ApiError("NO_ROOMS", "This Hotel has no available rooms", exception.getMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
 
@@ -67,8 +66,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HotelNotFoundException.class)
     public ResponseEntity<ApiError> handleHotelNotFoundException(HotelNotFoundException exception){
-        logger.error("fasza");
+        logger.error(exception.getMessage());
         ApiError result = new ApiError("HOTEL_NOT_FOUND", "Hotel was not found in our database", exception.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoomNotFoundException.class)
+    public ResponseEntity<ApiError> handleRoomNotFoundException(RoomNotFoundException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("ROOM_NOT_FOUND", "This room does not exist", exception.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoomAlreadyDeletedException.class)
+    public ResponseEntity<ApiError> handleRoomAlreadyDeletedException(RoomAlreadyDeletedException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("ROOM_ALREADY_DELETED", "This room is already deleted", exception.getMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 

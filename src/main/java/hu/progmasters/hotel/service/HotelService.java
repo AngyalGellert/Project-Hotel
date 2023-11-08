@@ -10,6 +10,7 @@ import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.exception.HotelHasNoRoomsException;
 import hu.progmasters.hotel.exception.HotelNotFoundException;
+import hu.progmasters.hotel.exception.RoomNotFoundException;
 import hu.progmasters.hotel.repository.HotelRepository;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
