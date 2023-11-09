@@ -118,11 +118,22 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ReservationNotFoundException.class)
-    public ResponseEntity<ApiError> handleReservationNotFound(ReservationNotFoundException reservationNotFoundException) {
-        logger.error("ReservationNotFound: ", reservationNotFoundException);
+    public ResponseEntity<ApiError> handleReservationNotFound(ReservationNotFoundException exception) {
+        logger.error("ReservationNotFound: ", exception);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
-        ApiError body = new ApiError("Reservation_Not_Found", "Can't delete", reservationNotFoundException.getLocalizedMessage());
+        ApiError body = new ApiError("Reservation_Not_Found", "Can't delete", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, status);
+
+    }
+
+    @ExceptionHandler(ReservationAlreadyDeletedException.class)
+    public ResponseEntity<ApiError> handleReservationAlreadyDeleted(ReservationAlreadyDeletedException exception) {
+        logger.error("ReservationAlreadyDeleted: ", exception);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        ApiError body = new ApiError("Reservation_ALREADY_DELETED", "This reservation is no longer available as it was deleted.", exception.getLocalizedMessage());
 
         return new ResponseEntity<>(body, status);
 
