@@ -16,4 +16,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("SELECT r FROM Room r WHERE r.isDeleted = false AND r.hotel.id = :hotelId")
     List<Room> findAllAvailableRoomsFromHotel(@Param("hotelId") Long hotelId);
 
+    @Query("SELECT COUNT (r) FROM Room r WHERE r.isDeleted = false AND r.hotel.id = :hotelId")
+    int numberOfAvailableRooms(@Param("hotelId") Long hotelId);
+
 }

@@ -75,13 +75,9 @@ public class HotelService {
 
         for (Hotel hotel : hotels) {
             HotelDetails hotelDetails = modelMapper.map(hotel, HotelDetails.class);
-            hotelDetails.setNumberOfRooms(countRooms(hotel));
+            hotelDetails.setNumberOfRooms(roomRepository.numberOfAvailableRooms(hotel.getId()));
             hotelDetailsList.add(hotelDetails);
         }
         return hotelDetailsList;
-    }
-
-    private int countRooms (Hotel hotel) {
-        return listAllRoomsOfHotel(hotel.getId()).size();
     }
 }
