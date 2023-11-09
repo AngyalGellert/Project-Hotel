@@ -2,6 +2,7 @@ package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.response.HotelDetails;
 import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.service.HotelService;
@@ -45,5 +46,11 @@ public class HotelController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/listAllHotels")
+    public ResponseEntity<List<HotelDetails>> listAll() {
+        log.info("HTTP GET request to api/hotels/listAllHotels");
+        List<HotelDetails> listedHotelDetails = hotelService.listHotelDetails();
+        return new ResponseEntity<>(listedHotelDetails, HttpStatus.OK);
+    }
 
 }

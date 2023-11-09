@@ -1,7 +1,5 @@
 package hu.progmasters.hotel.dto.response;
 
-import hu.progmasters.hotel.domain.Room;
-
 import java.time.LocalDate;
 
 public class ReservationDetails {

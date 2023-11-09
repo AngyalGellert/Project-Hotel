@@ -4,8 +4,8 @@ package hu.progmasters.hotel.service;
 import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
-import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.response.HotelDetails;
 import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.exception.HotelHasNoRoomsException;
@@ -40,7 +40,8 @@ public class HotelService {
 
     public HotelAndRoomInfo addRoomToHotel(HotelAndRoom hotelAndRoom) {
         Hotel hotel = hotelRepository.findById(hotelAndRoom.getHotelId()).orElseThrow(() -> new HotelNotFoundException(hotelAndRoom.getHotelId()));
-        Room room =  roomRepository.findById(hotelAndRoom.getRoomId()).orElseThrow(() -> new RoomNotFoundException(hotelAndRoom.getRoomId()));
+//        Room room =  roomRepository.findById(hotelAndRoom.getRoomId()).orElseThrow(() -> new RoomNotFoundException(hotelAndRoom.getRoomId()));
+        Room room =  roomRepository.findById(hotelAndRoom.getRoomId()).orElseThrow(IllegalArgumentException::new);
         room.setHotel(hotel);
         roomRepository.save(room);
         return new HotelAndRoomInfo(hotel, room);
@@ -66,5 +67,21 @@ public class HotelService {
     public Hotel findHotelById(Long hotelId) {
         Optional<Hotel> hotel = hotelRepository.findById(hotelId);
         return hotel.orElseThrow(() -> new HotelNotFoundException(hotelId));
+    }
+
+    public List<HotelDetails> listHotelDetails() {
+        List<Hotel> hotels = hotelRepository.findAll();
+        List<HotelDetails> hotelDetailsList = new ArrayList<>();
+
+        for (Hotel hotel : hotels) {
+            HotelDetails hotelDetails = modelMapper.map(hotel, HotelDetails.class);
+            hotelDetails.setNumberOfRooms(countRooms(hotel));
+            hotelDetailsList.add(hotelDetails);
+        }
+        return hotelDetailsList;
+    }
+
+    private int countRooms (Hotel hotel) {
+        return listAllRoomsOfHotel(hotel.getId()).size();
     }
 }
