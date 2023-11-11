@@ -114,5 +114,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, status);
 
     }
+
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    public ResponseEntity<ApiError> emailAlreadyInUse(EmailAlreadyInUseException emailAlreadyInUseException) {
+        logger.error("EmailAlreadyInUse ", emailAlreadyInUseException);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        ApiError body = new ApiError("Email Already In Use", "Can't registration", emailAlreadyInUseException.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, status);
+
+    }
 }
 
