@@ -11,12 +11,20 @@
 
 package hu.progmasters.hotel.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.Ordered;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @Configuration
 public class SpringWebConfig implements WebMvcConfigurer {
@@ -36,5 +44,18 @@ public class SpringWebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:4200", "http://127.0.0.1:4200")
                 .allowedMethods("GET", "POST", "DELETE", "PUT");
+    }
+
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        InetAddress myHost = null;
+        try {
+            myHost = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+            registry.addViewController("/login").setViewName("auth/login");
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 }

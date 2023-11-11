@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping()
 public class UserController {
 
     private UserService userService;
@@ -27,8 +27,10 @@ public class UserController {
         return new ResponseEntity(userInfo, HttpStatus.OK);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity
+//    @GetMapping("/login")
+//    public ResponseEntity login(@RequestBody @Valid UserLoginForm userLoginForm){
+//
+//    }
 
 
 

@@ -9,13 +9,17 @@ import hu.progmasters.hotel.exception.EmailAlreadyInUseException;
 import hu.progmasters.hotel.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+
 
     @Autowired
     public UserService(UserRepository userRepository, ModelMapper modelMapper) {
@@ -45,4 +49,15 @@ public class UserService {
     }
 
 
+    @Override
+    public UserDetails loadUserByUsername(String getEmailAddressFromLoginPage) throws UsernameNotFoundException {
+        User usersSearchByEmail = userRepository.findByEmail(getEmailAddressFromLoginPage);
+
+        if (usersSearchByEmail == null) {
+
+            throw new UsernameNotFoundException(getEmailAddressFromLoginPage);
+        }
+
+        return new UserLogin(usersSearchByEmail);
+    }
 }
