@@ -27,6 +27,5 @@ public class UserRegistrationForm {
     @Size(min = 3, max = 200)
     private String password;
 
-    private Role role;
 
 }

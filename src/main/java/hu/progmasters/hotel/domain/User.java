@@ -29,11 +29,12 @@ public class User {
     private String userName;
 
     @Size(min = 3, max = 200)
+    @Column(unique = true)
     private String email;
 
     @Size(min = 3, max = 200)
     private String password;
-
+@Enumerated(EnumType.STRING)
     private Role role;
 
 

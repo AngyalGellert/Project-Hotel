@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
         newUser.setUserName(userRegistrationForm.getUserName());
         newUser.setEmail(userRegistrationForm.getEmail());
         newUser.setPassword(passwordEncoder.encode(userRegistrationForm.getPassword()));
-        newUser.setRole(Role.USER);
+        newUser.setRole(Role.ROLE_USER);
         userRepository.save(newUser);
         return modelMapper.map(newUser, UserInfo.class);
     }

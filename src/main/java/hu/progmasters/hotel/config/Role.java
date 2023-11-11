@@ -2,9 +2,9 @@ package hu.progmasters.hotel.config;
 
 public enum Role {
 
-    USER("User"),
+    ROLE_USER("User"),
 
-    ADMIN("Admin");
+    ROLE_ADMIN("Admin");
 
     private String roleName;
 
