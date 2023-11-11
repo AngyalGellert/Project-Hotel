@@ -34,8 +34,8 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public RoomDetails roomDetail(@PathVariable("id") Long id) {
-        return roomService.getRoomDetails(id);
+    public ResponseEntity <RoomDetails> roomDetail(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(roomService.getRoomDetails(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/reservations")
@@ -44,9 +44,9 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity createRoom(@RequestBody @Valid RoomForm roomForm) {
+    public ResponseEntity <ResponseEntity> createRoom(@RequestBody @Valid RoomForm roomForm) {
         roomService.createRoom(roomForm);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

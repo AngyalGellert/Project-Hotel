@@ -2,8 +2,9 @@ package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
-import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
+import hu.progmasters.hotel.dto.response.HotelCreationResponse;
+import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.service.HotelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,15 +27,15 @@ public class HotelController {
     }
 
     @PostMapping
-    public ResponseEntity createHotel(@RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
-       hotelService.createHotel(hotelCreateRequest);
-        return new ResponseEntity(HttpStatus.CREATED);
+    public ResponseEntity <HotelCreationResponse> createHotel(@RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
+       HotelCreationResponse hotelCreationResponse = hotelService.createHotel(hotelCreateRequest);
+        return new ResponseEntity<>(hotelCreationResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/addroom")
     public ResponseEntity<HotelAndRoomInfo> addRoomToHotel(@RequestBody @Valid HotelAndRoom hotelAndRoom){
         HotelAndRoomInfo hotelAndRoomInfo = hotelService.addRoomToHotel(hotelAndRoom);
-        return new ResponseEntity(hotelAndRoomInfo, HttpStatus.OK);
+        return new ResponseEntity<>(hotelAndRoomInfo, HttpStatus.OK);
     }
 
 
