@@ -56,6 +56,7 @@ public class SpringWebConfig implements WebMvcConfigurer {
             e.printStackTrace();
         }
             registry.addViewController("/login").setViewName("auth/login");
+            registry.addViewController("/index").setViewName("auth/index");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 }
