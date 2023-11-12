@@ -1,6 +1,7 @@
 package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
+import hu.progmasters.hotel.dto.response.RoomDeletionResponse;
 import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.dto.request.RoomForm;
 import hu.progmasters.hotel.dto.response.RoomDetailsWithReservations;
@@ -21,7 +22,7 @@ import java.util.List;
 @RequestMapping("/api/rooms")
 public class RoomController {
 
-    private RoomService roomService;
+    private final RoomService roomService;
 
     @Autowired
     public RoomController(RoomService roomService) {
@@ -29,8 +30,9 @@ public class RoomController {
     }
 
     @GetMapping
-    public List<RoomListItem> rooms() {
-        return roomService.getRoomList();
+    public ResponseEntity <List<RoomListItem>> listAllRooms() {
+        List<RoomListItem> result = roomService.getRoomList();
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -39,25 +41,24 @@ public class RoomController {
     }
 
     @GetMapping("/{id}/reservations")
-    public RoomDetailsWithReservations roomDetailWithReservation(@PathVariable("id") Long id) {
-        return roomService.getRoomDetailsWithReservations(id);
+    public ResponseEntity <RoomDetailsWithReservations> roomDetailWithReservation(@PathVariable("id") Long id) {
+        return new ResponseEntity<> (roomService.getRoomDetailsWithReservations(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity <ResponseEntity> createRoom(@RequestBody @Valid RoomForm roomForm) {
-        roomService.createRoom(roomForm);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity <RoomDetails> createRoom(@RequestBody @Valid RoomForm roomForm) {
+        RoomDetails result = roomService.createRoom(roomForm);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity deleteRoom(@PathVariable("id") Long roomId) {
-        roomService.deleteRoom(roomId);
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<Void> deleteRoom(@PathVariable("id") Long roomId) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/update")
     public ResponseEntity <RoomDetails> updateRoom(@RequestBody @Valid RoomFormUpdate roomFormUpdate) {
-        return new ResponseEntity( roomService.updateRoomValues(roomFormUpdate),HttpStatus.OK);
+        return new ResponseEntity<>( roomService.updateRoomValues(roomFormUpdate), HttpStatus.OK);
     }
 
 }

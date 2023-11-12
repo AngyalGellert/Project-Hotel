@@ -47,8 +47,8 @@ public class RoomService {
         return roomListItems;
     }
 
-    public void createRoom(RoomForm roomForm) {
-        roomRepository.save(new Room(roomForm));
+    public RoomDetails createRoom(RoomForm roomForm) {
+        return modelMapper.map(roomRepository.save(new Room(roomForm)), RoomDetails.class);
     }
 
     public RoomDetails getRoomDetails(Long roomId) {
