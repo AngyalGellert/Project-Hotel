@@ -3,7 +3,8 @@ package hu.progmasters.hotel.service;
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
-import hu.progmasters.hotel.dto.response.*;
+import hu.progmasters.hotel.dto.response.ReservationDetails;
+import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.dto.request.RoomForm;
 import hu.progmasters.hotel.dto.response.RoomDetailsWithReservations;
 import hu.progmasters.hotel.dto.response.RoomListItem;
@@ -13,6 +14,8 @@ import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,7 @@ import java.util.Optional;
  * Created by szfilep.
  */
 @Service
+@Transactional
 public class RoomService {
 
     private final RoomRepository roomRepository;
@@ -45,25 +49,13 @@ public class RoomService {
         return roomListItems;
     }
 
-    public void createRoom(RoomForm roomForm) {
-        roomRepository.save(new Room(roomForm));
+    public RoomDetails createRoom(RoomForm roomForm) {
+        return modelMapper.map(roomRepository.save(new Room(roomForm)), RoomDetails.class);
     }
 
     public RoomDetails getRoomDetails(Long roomId) {
-        RoomDetails roomDetails = new RoomDetails();
-
-        Optional<Room> room = roomRepository.findById(roomId);
-        if (room.isPresent()) {
-            roomDetails.setId(room.get().getId());
-            roomDetails.setName(room.get().getName());
-            roomDetails.setNumberOfBeds(room.get().getNumberOfBeds());
-            roomDetails.setPricePerNight(room.get().getPricePerNight());
-            roomDetails.setDescription(room.get().getDescription());
-            roomDetails.setImageUrl(room.get().getImageUrl());
-        } else {
-            throw new RoomNotFoundException(roomId);
-        }
-        return roomDetails;
+        Room room = findRoomById(roomId);
+        return modelMapper.map(room, RoomDetails.class);
     }
 
     private void updateRoomListItemValues(RoomListItem item, Room room) {
@@ -75,16 +67,14 @@ public class RoomService {
     }
 
     public RoomDeletionResponse deleteRoom(Long roomId) {
-        Optional<Room> roomToBeDeleted = roomRepository.findById(roomId);
-        if (roomToBeDeleted.isEmpty()) {
-            throw new RoomNotFoundException(roomId);
-        } else if (roomToBeDeleted.get().isDeleted()) {
+        Room roomToBeDeleted = findRoomById(roomId);
+        if (roomToBeDeleted.isDeleted()) {
             throw new RoomAlreadyDeletedException(roomId);
         } else {
-            roomToBeDeleted.get().setDeleted(true);
-            roomRepository.save(roomToBeDeleted.get());
+            roomToBeDeleted.setDeleted(true);
+            roomRepository.save(roomToBeDeleted);
             RoomDeletionResponse result = modelMapper.map(roomToBeDeleted, RoomDeletionResponse.class);
-            result.setDeletionMessage(roomId, roomToBeDeleted.get().getName());
+            result.setDeletionMessage(roomId, roomToBeDeleted.getName());
             return result;
         }
     }
@@ -115,7 +105,6 @@ public class RoomService {
 
         return new ModelMapper().map(room.get(), RoomDetails.class);
     }
-
 
 
     public Room findRoomById(Long roomId) {

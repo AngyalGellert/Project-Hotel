@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 public class RoomController {
 
-    private RoomService roomService;
+    private final RoomService roomService;
 
     @Autowired
     public RoomController(RoomService roomService) {
@@ -32,24 +32,25 @@ public class RoomController {
     }
 
     @GetMapping
-    public List<RoomListItem> rooms() {
-        return roomService.getRoomList();
+    public ResponseEntity <List<RoomListItem>> listAllRooms() {
+        List<RoomListItem> result = roomService.getRoomList();
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public RoomDetails roomDetail(@PathVariable("id") Long id) {
-        return roomService.getRoomDetails(id);
+    public ResponseEntity <RoomDetails> roomDetail(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(roomService.getRoomDetails(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/reservations")
-    public RoomDetailsWithReservations roomDetailWithReservation(@PathVariable("id") Long id) {
-        return roomService.getRoomDetailsWithReservations(id);
+    public ResponseEntity <RoomDetailsWithReservations> roomDetailWithReservation(@PathVariable("id") Long id) {
+        return new ResponseEntity<> (roomService.getRoomDetailsWithReservations(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity createRoom(@RequestBody @Valid RoomForm roomForm) {
-        roomService.createRoom(roomForm);
-        return new ResponseEntity(HttpStatus.CREATED);
+    public ResponseEntity <RoomDetails> createRoom(@RequestBody @Valid RoomForm roomForm) {
+        RoomDetails result = roomService.createRoom(roomForm);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping("/{roomId}")
@@ -61,7 +62,7 @@ public class RoomController {
 
     @PostMapping("/update")
     public ResponseEntity <RoomDetails> updateRoom(@RequestBody @Valid RoomFormUpdate roomFormUpdate) {
-        return new ResponseEntity( roomService.updateRoomValues(roomFormUpdate),HttpStatus.OK);
+        return new ResponseEntity<>( roomService.updateRoomValues(roomFormUpdate), HttpStatus.OK);
     }
 
 }

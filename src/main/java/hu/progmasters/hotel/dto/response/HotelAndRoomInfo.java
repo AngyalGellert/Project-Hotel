@@ -2,12 +2,11 @@ package hu.progmasters.hotel.dto.response;
 
 import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.domain.Room;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-@Data
+@Getter
+@Setter
 public class HotelAndRoomInfo {
 
     private String hotelName;

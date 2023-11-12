@@ -14,14 +14,9 @@ import lombok.NoArgsConstructor;
 public class RoomListItem {
 
     private Long id;
-
     private String name;
-
     private Integer numberOfBeds;
-
     private Integer pricePerNight;
-
     private String imageUrl;
-
 
 }
