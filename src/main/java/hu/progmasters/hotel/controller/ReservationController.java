@@ -1,5 +1,6 @@
 package hu.progmasters.hotel.controller;
 
+import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
 import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.response.ReservationDetails;
 import hu.progmasters.hotel.service.ReservationService;
@@ -31,6 +32,13 @@ public class ReservationController {
         log.info("Http request, DELETE /api/reservation/{Id} with variable: " + id);
         reservationService.reservationDelete(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<ReservationDetails> updateReservation(@RequestBody @Valid ReservationModificationRequest request){
+        log.info("HTTP POST request to api/reservation/update for Reservation with ID: " + request.getId());
+        ReservationDetails result = reservationService.updateReservation(request);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

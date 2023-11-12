@@ -53,10 +53,10 @@ public class RoomController {
     }
 
     @PutMapping("/{roomId}")
-    public ResponseEntity<RoomDeletionResponse> deleteRoom(@PathVariable("roomId") Long roomId) {
+    public ResponseEntity deleteRoom(@PathVariable("roomId") Long roomId) {
         log.info("HTTP PUT request to api/rooms/{roomId} with variable: " + roomId);
         RoomDeletionResponse response = roomService.deleteRoom(roomId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @PostMapping("/update")

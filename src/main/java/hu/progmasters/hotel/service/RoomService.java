@@ -5,6 +5,8 @@ import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
 import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.dto.request.RoomForm;
+import hu.progmasters.hotel.dto.response.RoomDetailsWithReservations;
+import hu.progmasters.hotel.dto.response.RoomListItem;
 import hu.progmasters.hotel.exception.RoomAlreadyDeletedException;
 import hu.progmasters.hotel.exception.RoomNotFoundException;
 import hu.progmasters.hotel.repository.RoomRepository;
@@ -73,14 +75,16 @@ public class RoomService {
     }
 
     public RoomDeletionResponse deleteRoom(Long roomId) {
-        Room roomToBeDeleted = findRoomById(roomId);
-        if (roomToBeDeleted.isDeleted()) {
+        Optional<Room> roomToBeDeleted = roomRepository.findById(roomId);
+        if (roomToBeDeleted.isEmpty()) {
+            throw new RoomNotFoundException(roomId);
+        } else if (roomToBeDeleted.get().isDeleted()) {
             throw new RoomAlreadyDeletedException(roomId);
         } else {
-            roomToBeDeleted.setDeleted(true);
-            roomRepository.save(roomToBeDeleted);
+            roomToBeDeleted.get().setDeleted(true);
+            roomRepository.save(roomToBeDeleted.get());
             RoomDeletionResponse result = modelMapper.map(roomToBeDeleted, RoomDeletionResponse.class);
-            result.setDeletionMessage(roomId, roomToBeDeleted.getName());
+            result.setDeletionMessage(roomId, roomToBeDeleted.get().getName());
             return result;
         }
     }
