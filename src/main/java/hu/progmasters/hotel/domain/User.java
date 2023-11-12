@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,11 +27,13 @@ public class User {
 
     @Size(min = 3, max = 200)
     @Column(unique = true)
+    @Email
     private String email;
 
     @Size(min = 3, max = 200)
     private String password;
-@Enumerated(EnumType.STRING)
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 
 

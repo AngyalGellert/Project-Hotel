@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 
 @AllArgsConstructor
@@ -17,14 +14,21 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 public class UserRegistrationForm {
-    @NotNull
-    @Size(min = 3, max = 200)
+    @NotNull(message = "Username must not be null.")
+    @NotBlank(message = "Username must not be blank.")
+    @Size(min = 3, max = 200, message = "Username min 3 character")
     private String userName;
 
-    @Size(min = 3, max = 200)
+    @Size(min = 3, max = 200, message = "Email min 3 character")
+    @Email(message = "Please enter a valid email.")
+    @NotNull(message = "Email must not be null.")
+    @NotBlank(message = "Email must not be blank.")
     private String email;
 
-    @Size(min = 3, max = 200)
+
+    @NotBlank(message = "Password must not be blank.")
+    @NotNull(message = "Password must not be null.")
+    @Size(min = 3, max = 200, message = "Password min 3 character")
     private String password;
 
 
