@@ -73,16 +73,14 @@ public class RoomService {
     }
 
     public RoomDeletionResponse deleteRoom(Long roomId) {
-        Optional<Room> roomToBeDeleted = roomRepository.findById(roomId);
-        if (roomToBeDeleted.isEmpty()) {
-            throw new RoomNotFoundException(roomId);
-        } else if (roomToBeDeleted.get().isDeleted()) {
+        Room roomToBeDeleted = findRoomById(roomId);
+        if (roomToBeDeleted.isDeleted()) {
             throw new RoomAlreadyDeletedException(roomId);
         } else {
-            roomToBeDeleted.get().setDeleted(true);
-            roomRepository.save(roomToBeDeleted.get());
+            roomToBeDeleted.setDeleted(true);
+            roomRepository.save(roomToBeDeleted);
             RoomDeletionResponse result = modelMapper.map(roomToBeDeleted, RoomDeletionResponse.class);
-            result.setDeletionMessage(roomId, roomToBeDeleted.get().getName());
+            result.setDeletionMessage(roomId, roomToBeDeleted.getName());
             return result;
         }
     }
