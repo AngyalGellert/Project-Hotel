@@ -3,11 +3,10 @@ package hu.progmasters.hotel.service;
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
-import hu.progmasters.hotel.dto.response.ReservationDetails;
-import hu.progmasters.hotel.dto.response.RoomDetails;
+import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.dto.request.RoomForm;
-import hu.progmasters.hotel.dto.response.RoomDetailsWithReservations;
-import hu.progmasters.hotel.dto.response.RoomListItem;
+import hu.progmasters.hotel.exception.RoomAlreadyDeletedException;
+import hu.progmasters.hotel.exception.RoomNotFoundException;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,7 @@ public class RoomService {
             roomDetails.setDescription(room.get().getDescription());
             roomDetails.setImageUrl(room.get().getImageUrl());
         } else {
-            throw new IllegalArgumentException("There is no Room for this id:" + roomId);
+            throw new RoomNotFoundException(roomId);
         }
         return roomDetails;
     }
@@ -73,11 +72,16 @@ public class RoomService {
         item.setImageUrl(room.getImageUrl());
     }
 
-    public void deleteRoom(Long roomId) {
-        Optional<Room> roomToBeDeleted = roomRepository.findById(roomId);
-        if (roomToBeDeleted.isPresent()) {
-            roomToBeDeleted.get().setDeleted(true);
-            roomRepository.save(roomToBeDeleted.get());
+    public RoomDeletionResponse deleteRoom(Long roomId) {
+        Room roomToBeDeleted = findRoomById(roomId);
+        if (roomToBeDeleted.isDeleted()) {
+            throw new RoomAlreadyDeletedException(roomId);
+        } else {
+            roomToBeDeleted.setDeleted(true);
+            roomRepository.save(roomToBeDeleted);
+            RoomDeletionResponse result = modelMapper.map(roomToBeDeleted, RoomDeletionResponse.class);
+            result.setDeletionMessage(roomId, roomToBeDeleted.getName());
+            return result;
         }
     }
 
@@ -102,7 +106,7 @@ public class RoomService {
             roomRepository.save(room.get());
 
         } else {
-            throw new IllegalArgumentException("There is no Room for this id:" + roomFormUpdate.getId());
+            throw new RoomNotFoundException(roomFormUpdate.getId());
         }
 
         return new ModelMapper().map(room.get(), RoomDetails.class);
@@ -112,7 +116,7 @@ public class RoomService {
 
     public Room findRoomById(Long roomId) {
         Optional<Room> roomOptional = roomRepository.findById(roomId);
-        return roomOptional.orElseThrow(() -> new IllegalArgumentException("There is no Room for this id:" + roomId));
+        return roomOptional.orElseThrow(() -> new RoomNotFoundException(roomId));
     }
 
     public RoomDetailsWithReservations getRoomDetailsWithReservations(Long roomId) {
