@@ -1,5 +1,6 @@
 package hu.progmasters.hotel.repository;
 
+import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.domain.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +19,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     @Query("SELECT COUNT (r) FROM Room r WHERE r.isDeleted = false AND r.hotel.id = :hotelId")
     int numberOfAvailableRooms(@Param("hotelId") Long hotelId);
+
+    @Query("SELECT r FROM Room r WHERE r.name = :roomName")
+    public Room findRoomByName(@Param("roomName") String roomName);
 
 }

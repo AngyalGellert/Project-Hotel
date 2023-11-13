@@ -9,9 +9,9 @@ import hu.progmasters.hotel.dto.response.HotelDetails;
 import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.dto.response.HotelCreationResponse;
 import hu.progmasters.hotel.dto.response.RoomDetails;
+import hu.progmasters.hotel.exception.HotelAlreadyExistsException;
 import hu.progmasters.hotel.exception.HotelHasNoRoomsException;
 import hu.progmasters.hotel.exception.HotelNotFoundException;
-import hu.progmasters.hotel.exception.RoomNotFoundException;
 import hu.progmasters.hotel.repository.HotelRepository;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
@@ -39,8 +39,12 @@ public class HotelService {
     }
 
     public HotelCreationResponse createHotel(HotelCreateRequest hotelCreateRequest) {
-        Hotel savedHotel = hotelRepository.save(modelMapper.map(hotelCreateRequest, Hotel.class));
-        return modelMapper.map(savedHotel, HotelCreationResponse.class);
+        if (checkIfHotelAlreadyExistsByName(hotelCreateRequest.getName())) {
+            throw new HotelAlreadyExistsException(hotelCreateRequest.getName());
+        } else {
+            Hotel savedHotel = hotelRepository.save(modelMapper.map(hotelCreateRequest, Hotel.class));
+            return modelMapper.map(savedHotel, HotelCreationResponse.class);
+        }
     }
 
     public HotelAndRoomInfo addRoomToHotel(HotelAndRoom hotelAndRoom) {
@@ -79,5 +83,12 @@ public class HotelService {
             hotelDetailsList.add(hotelDetails);
         }
         return hotelDetailsList;
+    }
+
+    public boolean checkIfHotelAlreadyExistsByName(String hotelName){
+        if (hotelRepository.findHotelByName(hotelName) != null) {
+            return true;
+        }
+        return false;
     }
 }

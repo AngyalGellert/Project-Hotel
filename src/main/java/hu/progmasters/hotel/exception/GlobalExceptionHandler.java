@@ -149,5 +149,27 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, status);
 
     }
+
+    @ExceptionHandler(HotelAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleHotelAlreadyExistsException(HotelAlreadyExistsException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("HOTEL_ALREADY_CREATED", "A hotel already exists with this name", exception.getLocalizedMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoomAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleRoomAlreadyExistsException(RoomAlreadyExistsException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("ROOM_NAME_ALREADY_TAKEN", "A room already exists with this name", exception.getLocalizedMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ReservationAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleReservationAlreadyExistsException(ReservationAlreadyExistsException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("RESERVATION_ALREADY_CREATED", "This reservation already exists", exception.getLocalizedMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
 }
 

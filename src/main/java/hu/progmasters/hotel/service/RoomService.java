@@ -1,12 +1,14 @@
 package hu.progmasters.hotel.service;
 
+import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
+import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
 import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.dto.request.RoomForm;
-import hu.progmasters.hotel.exception.RoomAlreadyDeletedException;
-import hu.progmasters.hotel.exception.RoomNotFoundException;
+import hu.progmasters.hotel.exception.*;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,11 @@ public class RoomService {
     }
 
     public RoomDetails createRoom(RoomForm roomForm) {
-        return modelMapper.map(roomRepository.save(new Room(roomForm)), RoomDetails.class);
+        if (checkIfRoomAlreadyExistsByName(roomForm.getName())) {
+            throw new RoomAlreadyExistsException(roomForm.getName());
+        } else {
+            return modelMapper.map(roomRepository.save(new Room(roomForm)), RoomDetails.class);
+        }
     }
 
     public RoomDetails getRoomDetails(Long roomId) {
@@ -121,6 +127,13 @@ public class RoomService {
         roomDetailsWithReservations.setReservationDetails(reservationDetailsList);
         return roomDetailsWithReservations;
 
+    }
+
+    public boolean checkIfRoomAlreadyExistsByName(String roomName){
+        if (roomRepository.findRoomByName(roomName) != null) {
+            return true;
+        }
+        return false;
     }
 
 }
