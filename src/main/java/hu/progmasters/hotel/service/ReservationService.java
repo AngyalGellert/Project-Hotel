@@ -35,7 +35,7 @@ public class ReservationService {
 
     public ReservationDeletedResponse reservationDelete(Long id) {
         Reservation reservation = findReservationById(id);
-        if (reservationIsNotDeleted(id)) {
+        if (reservationIsNotDeleted(reservation)) {
             reservation.setDeleted(true);
             reservationRepository.save(reservation);
             return modelMapper.map(reservation, ReservationDeletedResponse.class);
@@ -46,7 +46,7 @@ public class ReservationService {
 
     public ReservationDetails updateReservation(ReservationModificationRequest request) {
         Reservation reservation = findReservationById(request.getId());
-        if (reservationIsNotDeleted(reservation.getId())) {
+        if (reservationIsNotDeleted(reservation)) {
             if (!request.getGuestName().isBlank()) {
                 reservation.setGuestName(request.getGuestName());
             }
@@ -63,8 +63,7 @@ public class ReservationService {
         return modelMapper.map(reservation, ReservationDetails.class);
     }
 
-    private boolean reservationIsNotDeleted(Long reservationId) {
-        Reservation reservation = findReservationById(reservationId);
+    private boolean reservationIsNotDeleted(Reservation reservation) {
         if (!reservation.isDeleted()) {
             return true;
         } else {
