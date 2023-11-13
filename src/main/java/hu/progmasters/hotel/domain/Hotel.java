@@ -20,6 +20,7 @@ public class Hotel {
 
     @NotNull
     @Size(min = 1, max = 200)
+    @Column(unique = true)
     private String name;
 
     @NotNull
