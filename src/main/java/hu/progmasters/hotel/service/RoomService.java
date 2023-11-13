@@ -77,30 +77,29 @@ public class RoomService {
     }
 
     public RoomDetails updateRoomValues(@Valid RoomFormUpdate roomFormUpdate) {
-        Optional<Room> room = roomRepository.findById(roomFormUpdate.getId());
-        if (room.isPresent()) {
-            if (!roomFormUpdate.getName().isEmpty() || !roomFormUpdate.getName().isBlank() || !roomFormUpdate.getName().equals(room.get().getName())) {
-                room.get().setName(roomFormUpdate.getName());
-            }
-            if (roomFormUpdate.getNumberOfBeds() != room.get().getNumberOfBeds() || roomFormUpdate.getNumberOfBeds() != 0){
-                room.get().setNumberOfBeds(roomFormUpdate.getNumberOfBeds());
-            }
-            if(roomFormUpdate.getPricePerNight() != room.get().getPricePerNight() || roomFormUpdate.getPricePerNight() != 0){
-                room.get().setPricePerNight(roomFormUpdate.getPricePerNight());
-            }
-            if(!roomFormUpdate.getDescription().equals(room.get().getDescription())){
-                room.get().setDescription(roomFormUpdate.getDescription());
-            }
-            if(!roomFormUpdate.getImageUrl().equals(room.get().getImageUrl())){
-                room.get().setImageUrl(roomFormUpdate.getImageUrl());
-            }
-            roomRepository.save(room.get());
-
+        Room room = findRoomById(roomFormUpdate.getId());
+        if (room.isDeleted()) {
+            throw new RoomAlreadyDeletedException(room.getId());
         } else {
-            throw new RoomNotFoundException(roomFormUpdate.getId());
-        }
+            if (!roomFormUpdate.getName().isBlank()) {
+                room.setName(roomFormUpdate.getName());
+            }
+            if (roomFormUpdate.getNumberOfBeds() != null) {
+                room.setNumberOfBeds(roomFormUpdate.getNumberOfBeds());
+            }
+            if (roomFormUpdate.getPricePerNight() != null) {
+                room.setPricePerNight(roomFormUpdate.getPricePerNight());
+            }
+            if (!roomFormUpdate.getDescription().isBlank()) {
+                room.setDescription(roomFormUpdate.getDescription());
+            }
+            if (!roomFormUpdate.getImageUrl().isBlank()) {
+                room.setImageUrl(roomFormUpdate.getImageUrl());
+            }
+            roomRepository.save(room);
 
-        return new ModelMapper().map(room.get(), RoomDetails.class);
+        }
+        return new ModelMapper().map(room, RoomDetails.class);
     }
 
 
