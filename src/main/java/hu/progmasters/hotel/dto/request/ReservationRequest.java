@@ -10,8 +10,10 @@ public class ReservationRequest {
 
     @NotBlank
     private String guestName;
-    @PastOrPresent
+    @FutureOrPresent(message = "Date must be present date or in the future")
     private LocalDate startDate;
-    @FutureOrPresent
+    @Future(message = "Date must in the future")
     private LocalDate endDate;
+    @NotNull(message = "Must not be null")
+    private Long roomId;
 }

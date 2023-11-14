@@ -116,16 +116,22 @@ public class RoomService {
 
     public RoomDetailsWithReservations getRoomDetailsWithReservations(Long roomId) {
         Room room = findRoomById(roomId);
-        List<ReservationDetails> reservationDetailsList = new ArrayList<>();
+        if (!room.isDeleted()) {
+            List<ReservationDetails> reservationDetailsList = new ArrayList<>();
 
-        for (Reservation reservation : room.getReservations()) {
-            ReservationDetails reservationDetails = modelMapper.map(reservation, ReservationDetails.class);
-            reservationDetailsList.add(reservationDetails);
+            for (Reservation reservation : room.getReservations()) {
+                if (!reservation.isDeleted()) {
+                    ReservationDetails reservationDetails = modelMapper.map(reservation, ReservationDetails.class);
+                    reservationDetailsList.add(reservationDetails);
+                }
+            }
+
+            RoomDetailsWithReservations roomDetailsWithReservations = modelMapper.map(room, RoomDetailsWithReservations.class);
+            roomDetailsWithReservations.setReservationDetails(reservationDetailsList);
+            return roomDetailsWithReservations;
+        } else {
+            throw new RoomAlreadyDeletedException(roomId);
         }
-
-        RoomDetailsWithReservations roomDetailsWithReservations = modelMapper.map(room, RoomDetailsWithReservations.class);
-        roomDetailsWithReservations.setReservationDetails(reservationDetailsList);
-        return roomDetailsWithReservations;
 
     }
 

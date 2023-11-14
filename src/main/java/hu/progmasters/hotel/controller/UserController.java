@@ -31,17 +31,17 @@ public class UserController {
         UserInfo userInfo = userService.registrationUser(userRegistrationForm);
         return new ResponseEntity(userInfo, HttpStatus.OK);
     }
-//Postmen endpoitn
-    @GetMapping("/loginn")
+
+    @GetMapping("/login")
     public ResponseEntity<String> userLoginn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ResponseEntity<String> result = ResponseEntity.ok("Login page content. You are logged is: " + authentication.isAuthenticated() + ". Your role is "
                 + authentication.getAuthorities().toString());
         return result;
     }
-//Html request enpoint
-    @GetMapping("/login")
+
+    @GetMapping("/index")
     public String userLogin(){
-        return "login";
+        return "index";
     }
 }

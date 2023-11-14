@@ -1,12 +1,14 @@
 package hu.progmasters.hotel.service;
 
 import hu.progmasters.hotel.domain.Reservation;
+import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
 import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.response.ReservationDeletedResponse;
 import hu.progmasters.hotel.dto.response.ReservationDetails;
 import hu.progmasters.hotel.exception.ReservationAlreadyDeletedException;
 import hu.progmasters.hotel.exception.ReservationNotFoundException;
+import hu.progmasters.hotel.exception.RoomAlreadyDeletedException;
 import hu.progmasters.hotel.repository.ReservationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +26,21 @@ import java.util.Optional;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final RoomService roomService;
     private final ModelMapper modelMapper;
 
 
-    public ReservationDetails recordsReservation(@Valid ReservationRequest reservation) {
-        Reservation newReservation = modelMapper.map(reservation, Reservation.class);
-        Reservation saved = reservationRepository.save(newReservation);
-        return modelMapper.map(saved, ReservationDetails.class);
+    public ReservationDetails recordsReservation(@Valid ReservationRequest request) {
+        Room roomForThisReservation = roomService.findRoomById(request.getRoomId());
+        if (roomForThisReservation.isDeleted()) {
+            throw new RoomAlreadyDeletedException(request.getRoomId());
+        } else {
+            Reservation reservation = modelMapper.map(request, Reservation.class);
+            reservation.setRoom(roomForThisReservation);
+            ReservationDetails result = modelMapper.map(reservationRepository.save(reservation), ReservationDetails.class);
+            result.setRoomName(roomForThisReservation.getName());
+            return result;
+        }
     }
 
     public ReservationDeletedResponse reservationDelete(Long id) {
@@ -46,19 +56,23 @@ public class ReservationService {
 
     public ReservationDetails updateReservation(ReservationModificationRequest request) {
         Reservation reservation = findReservationById(request.getId());
-        if (reservationIsNotDeleted(reservation)) {
-            if (!request.getGuestName().isBlank()) {
-                reservation.setGuestName(request.getGuestName());
+        if (!reservation.getRoom().isDeleted()) {
+            if (reservationIsNotDeleted(reservation)) {
+                if (!request.getGuestName().isBlank()) {
+                    reservation.setGuestName(request.getGuestName());
+                }
+                if (request.getStartDate() != null) {
+                    reservation.setStartDate(request.getStartDate());
+                }
+                if (request.getEndDate() != null) {
+                    reservation.setEndDate(request.getEndDate());
+                }
+                reservationRepository.save(reservation);
+            } else {
+                throw new ReservationAlreadyDeletedException(reservation.getId());
             }
-            if (request.getStartDate() != null) {
-                reservation.setStartDate(request.getStartDate());
-            }
-            if (request.getEndDate() != null) {
-                reservation.setEndDate(request.getEndDate());
-            }
-            reservationRepository.save(reservation);
         } else {
-            throw new ReservationAlreadyDeletedException(reservation.getId());
+            throw new RoomAlreadyDeletedException(reservation.getRoom().getId());
         }
         return modelMapper.map(reservation, ReservationDetails.class);
     }

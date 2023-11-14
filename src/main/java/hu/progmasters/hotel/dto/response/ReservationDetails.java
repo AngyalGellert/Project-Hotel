@@ -17,5 +17,6 @@ public class ReservationDetails {
     private String guestName;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String roomName;
 
 }
