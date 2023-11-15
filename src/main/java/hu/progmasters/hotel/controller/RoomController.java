@@ -33,35 +33,40 @@ public class RoomController {
 
     @GetMapping
     public ResponseEntity <List<RoomListItem>> listAllRooms() {
+        log.info("Http request, Get /api/rooms");
         List<RoomListItem> result = roomService.getRoomList();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity <RoomDetails> roomDetail(@PathVariable("id") Long id) {
+        log.info("Http request, Get /api/rooms/{id}");
         return new ResponseEntity<>(roomService.getRoomDetails(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/reservations")
     public ResponseEntity <RoomDetailsWithReservations> roomDetailWithReservation(@PathVariable("id") Long id) {
+        log.info("Http request, Get /api/rooms/{id}/reservations");
         return new ResponseEntity<> (roomService.getRoomDetailsWithReservations(id), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity <RoomDetails> createRoom(@RequestBody @Valid RoomForm roomForm) {
+        log.info("Http request, Post /api/rooms, body: " + roomForm.toString());
         RoomDetails result = roomService.createRoom(roomForm);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping("/{roomId}")
-    public ResponseEntity deleteRoom(@PathVariable("roomId") Long roomId) {
+    public ResponseEntity <RoomDeletionResponse> deleteRoom(@PathVariable("roomId") Long roomId) {
         log.info("HTTP PUT request to api/rooms/{roomId} with variable: " + roomId);
         RoomDeletionResponse response = roomService.deleteRoom(roomId);
-        return new ResponseEntity(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/update")
     public ResponseEntity <RoomDetails> updateRoom(@RequestBody @Valid RoomFormUpdate roomFormUpdate) {
+        log.info("Http request, Post /api/rooms, body: " + roomFormUpdate.toString());
         return new ResponseEntity<>( roomService.updateRoomValues(roomFormUpdate), HttpStatus.OK);
     }
 
