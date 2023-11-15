@@ -107,15 +107,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, status);
     }
 
-    @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ApiError> defaultErrorHandler(Throwable t) {
-        logger.error("An unexpected error occurred: ", t);
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-        ApiError body = new ApiError("UNCLASSIFIED_ERROR", "Oh, snap! Something really unexpected occurred.", t.getLocalizedMessage());
-
-        return new ResponseEntity<>(body, status);
-    }
+//    @ExceptionHandler(Throwable.class)
+//    public ResponseEntity<ApiError> defaultErrorHandler(Throwable t) {
+//        logger.error("An unexpected error occurred: ", t);
+//        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+//
+//        ApiError body = new ApiError("UNCLASSIFIED_ERROR", "Oh, snap! Something really unexpected occurred.", t.getLocalizedMessage());
+//
+//        return new ResponseEntity<>(body, status);
+//    }
 
     @ExceptionHandler(ReservationNotFoundException.class)
     public ResponseEntity<ApiError> handleReservationNotFound(ReservationNotFoundException exception) {
@@ -169,6 +169,34 @@ public class GlobalExceptionHandler {
         logger.error(exception.getMessage());
         ApiError result = new ApiError("RESERVATION_ALREADY_CREATED", "This reservation already exists", exception.getLocalizedMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CloudinaryException.class)
+    public ResponseEntity<ApiError> handleCloudinaryError(CloudinaryException exception) {
+        ApiError body = new ApiError("CLOUDINARY_ERROR", "Cloudinary error occurred" , exception.getErrorMessage());
+        logger.error(exception.getErrorMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoImageException.class)
+    public ResponseEntity<ApiError> handleNoImageError(NoImageException exception) {
+        ApiError body = new ApiError("IMAGE_ERROR", "Image upload error occurred" , exception.getErrorMessage());
+        logger.error(exception.getErrorMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileSizeException.class)
+    public ResponseEntity<ApiError> handleImageSizeError(FileSizeException exception) {
+        ApiError body = new ApiError("IMAGE_SIZE_ERROR", "The uploaded image exceeds the maximum size", exception.getErrorMessage());
+        logger.error(exception.getErrorMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FilesMissingException.class)
+    public ResponseEntity<ApiError> handleMissingImagesError(FilesMissingException exception) {
+        ApiError body = new ApiError("MISSING_IMAGES_ERROR", "The are no images uploaded", exception.getErrorMessage());
+        logger.error(exception.getErrorMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
 }

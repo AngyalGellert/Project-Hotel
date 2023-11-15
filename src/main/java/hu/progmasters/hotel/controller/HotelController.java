@@ -2,6 +2,7 @@ package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.request.ImageUpload;
 import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.dto.response.HotelCreationResponse;
 import hu.progmasters.hotel.dto.response.HotelDetails;
@@ -56,4 +57,10 @@ public class HotelController {
         return new ResponseEntity<>(listedHotelDetails, HttpStatus.OK);
     }
 
+    @PutMapping("/{hotelId}/uploadImage")
+    public ResponseEntity<HotelDetails> imageUpload(@ModelAttribute @Valid ImageUpload imageUpload, @PathVariable("hotelId") Long hotelId) {
+        log.info("HTTP PUT request to api/hotels/{hotelId}/uploadImage with variable: " + hotelId);
+        HotelDetails hotelDetails = hotelService.uploadImage(hotelId, imageUpload);
+        return new ResponseEntity<>(hotelDetails, HttpStatus.OK);
+    }
 }

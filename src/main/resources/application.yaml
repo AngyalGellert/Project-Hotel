@@ -25,6 +25,11 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: true
 
+cloudinary:
+  cloudName: dvsrsgf1b
+  apiKey: 373982796696613
+  apiSecret: -kjrYl0BBLsOitvCcxn5pxrd3Rk
+
 logging:
   level:
     com.progmasters: debug
