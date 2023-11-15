@@ -1,13 +1,13 @@
 package hu.progmasters.hotel.dto.request;
+
 import hu.progmasters.hotel.validator.Image;
-import hu.progmasters.hotel.validator.MaxSize;
-import hu.progmasters.hotel.validator.NotEmptyList;
 import hu.progmasters.hotel.validator.MaxSize;
 import hu.progmasters.hotel.validator.NotEmptyList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @Data

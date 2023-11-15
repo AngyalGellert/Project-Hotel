@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ImageValidator implements ConstraintValidator<Image, List<MultipartFile>> {
 
-    private static final String[] ALLOWED_MIME_TYPES = {"image/jpeg", "image/jpg", "image/png"};
+    private static final String[] ALLOWED_MIME_TYPES = {"image/jpeg", "image/jpg", "image/png", "application/octet-stream"};
     private final Tika tika = new Tika();
 
     @Override

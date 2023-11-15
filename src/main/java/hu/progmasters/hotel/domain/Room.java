@@ -9,6 +9,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,7 +40,8 @@ public class Room {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String imageUrl;
+    @ElementCollection
+    private List<String> imageUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "room")
     private List<Reservation> reservations;
@@ -55,7 +57,7 @@ public class Room {
         this.numberOfBeds = roomForm.getNumberOfBeds();
         this.pricePerNight = roomForm.getPricePerNight();
         this.description = roomForm.getDescription();
-        this.imageUrl = roomForm.getImageUrl();
+        this.imageUrls = roomForm.getImageUrls();
         this.isDeleted = false;
     }
 }
