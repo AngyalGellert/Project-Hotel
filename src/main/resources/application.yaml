@@ -25,6 +25,11 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: true
 
+  servlet:
+    multipart:
+      max-file-size: 40MB
+      max-request-size: 40MB
+
 cloudinary:
   cloudName: dvsrsgf1b
   apiKey: 373982796696613
