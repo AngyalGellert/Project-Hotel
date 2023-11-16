@@ -48,6 +48,11 @@ public class HotelService {
             throw new HotelAlreadyExistsException(hotelCreateRequest.getName());
         } else {
             Hotel savedHotel = hotelRepository.save(modelMapper.map(hotelCreateRequest, Hotel.class));
+            List<String> newUploadedImageUrls = imageUploadService.uploadImages(hotelCreateRequest.getImages());
+            List<String> currentImageUrls = savedHotel.getImageUrls();
+
+            currentImageUrls.addAll(newUploadedImageUrls);
+            savedHotel.setImageUrls(currentImageUrls);
             return modelMapper.map(savedHotel, HotelCreationResponse.class);
         }
     }

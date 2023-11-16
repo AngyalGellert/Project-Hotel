@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * Created by szfilep.
- */
 @RestController
 @RequestMapping("/api/rooms")
 @Slf4j
@@ -49,7 +46,7 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity <RoomDetails> createRoom(@RequestBody @Valid RoomForm roomForm) {
+    public ResponseEntity <RoomDetails> createRoom(@ModelAttribute @RequestBody @Valid RoomForm roomForm) {
         log.info("Http request, Post /api/rooms, body: " + roomForm.toString());
         RoomDetails result = roomService.createRoom(roomForm);
         return new ResponseEntity<>(result, HttpStatus.CREATED);

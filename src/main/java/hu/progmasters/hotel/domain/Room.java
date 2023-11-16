@@ -12,9 +12,6 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by szfilep.
- */
 @Entity
 @Data
 @NoArgsConstructor
@@ -57,7 +54,6 @@ public class Room {
         this.numberOfBeds = roomForm.getNumberOfBeds();
         this.pricePerNight = roomForm.getPricePerNight();
         this.description = roomForm.getDescription();
-        this.imageUrls = roomForm.getImageUrls();
         this.isDeleted = false;
     }
 }

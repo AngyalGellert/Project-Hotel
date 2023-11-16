@@ -55,7 +55,12 @@ public class RoomService {
         if (checkIfRoomAlreadyExistsByName(roomForm.getName())) {
             throw new RoomAlreadyExistsException(roomForm.getName());
         } else {
-            return modelMapper.map(roomRepository.save(new Room(roomForm)), RoomDetails.class);
+            Room savedRoom = roomRepository.save(new Room(roomForm));
+            List<String> newUploadedImageUrls = imageUploadService.uploadImages(roomForm.getImages());
+            List<String> currentImageUrls = savedRoom.getImageUrls();
+            currentImageUrls.addAll(newUploadedImageUrls);
+            savedRoom.setImageUrls(currentImageUrls);
+            return modelMapper.map(savedRoom, RoomDetails.class);
         }
     }
 
