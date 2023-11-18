@@ -38,12 +38,11 @@ public class ReservationService {
     public ReservationDetails recordsReservation(@Valid ReservationRequest reservation) {
         Room room = roomService.findRoomById(reservation.getRoomId());
         if (room.isDeleted()) {
-            throw new RoomAlreadyDeletedException(request.getRoomId());
+            throw new RoomAlreadyDeletedException(reservation.getRoomId());
         } else {
         if (reservationDateValidate(reservation.getRoomId(),reservation.getStartDate(), reservation.getEndDate())) {
             throw new ReservationConflictException("Dátumok ütköznek a már foglalt dátumokkal");
         }
-
         Reservation newReservation = modelMapper.map(reservation, Reservation.class);
         newReservation.setRoom(room);
         Reservation saved = reservationRepository.save(newReservation);
