@@ -15,38 +15,43 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-
+    private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public UserService(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.emailSenderService = emailSenderService;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserInfo registrationUser(UserRegistrationForm userRegistrationForm){
-        if(findUserByEmail(userRegistrationForm.getEmail())){
-           throw new EmailAlreadyInUseException(userRegistrationForm.getEmail());
+    public UserInfo registrationUser(UserRegistrationForm userRegistrationForm) {
+        if (findUserByEmail(userRegistrationForm.getEmail())) {
+            throw new EmailAlreadyInUseException(userRegistrationForm.getEmail());
         }
-        User newUser= new User();
+        User newUser = new User();
         newUser.setUserName(userRegistrationForm.getUserName());
         newUser.setEmail(userRegistrationForm.getEmail());
         newUser.setPassword(passwordEncoder.encode(userRegistrationForm.getPassword()));
         newUser.setRole(Role.ROLE_USER);
         userRepository.save(newUser);
+        emailSenderService.sendEmail(userRegistrationForm);
         return modelMapper.map(newUser, UserInfo.class);
     }
 
     private boolean findUserByEmail(String email) {
         User user = userRepository.findByEmail(email);
-        if(user != null){
+        if (user != null) {
             return true;
         }
         return false;
