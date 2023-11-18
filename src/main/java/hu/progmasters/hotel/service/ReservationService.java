@@ -47,20 +47,7 @@ public class ReservationService {
 
     private boolean reservationDateValidate(Long roomId, LocalDate startDate, LocalDate endDate) {
         List<Reservation> reservations = reservationRepository.findConflictingReservations(roomId);
-        for (int i = 0; i < reservations.size(); i++) {
-            int helpDayNumbers = (int) ChronoUnit.DAYS.between(startDate, endDate);
-            List<LocalDate> dates = new ArrayList<>();
-            for (int j = 0; j < helpDayNumbers; j++) {
-                dates.add(startDate.plusDays(j));
-            }
-            if (dates.contains(startDate)) {
-                return true;
-            }
-            if (dates.contains(endDate)) {
-                return true;
-            }
-        }
-        return false;
+        return validatingDate(startDate, endDate, reservations);
     }
 
     public ReservationDeletedResponse reservationDelete(Long id) {
@@ -77,6 +64,7 @@ public class ReservationService {
     public ReservationDetails updateReservation(ReservationModificationRequest request) {
         Reservation reservation = findReservationById(request.getId());
         if (reservationUpdateDateValidate(reservation.getId(),reservation.getRoom().getId(), request.getStartDate(), request.getEndDate())) {
+            throw new ReservationConflictException("Dátumok ütköznek a már foglalt dátumokkal");
         }
 
         if (!reservation.isDeleted()) {
@@ -103,11 +91,15 @@ public class ReservationService {
                 reservations.remove(i);
             }
         }
+        return validatingDate(startDate, endDate, reservations);
+    }
+
+    private static boolean validatingDate(LocalDate startDate, LocalDate endDate, List<Reservation> reservations) {
         for (int i = 0; i < reservations.size(); i++) {
-            int helpDayNumbers = (int) ChronoUnit.DAYS.between(startDate, endDate);
+            int helpDayNumbers = (int) ChronoUnit.DAYS.between(reservations.get(i).getStartDate(), reservations.get(i).getEndDate()) + 1;
             List<LocalDate> dates = new ArrayList<>();
             for (int j = 0; j < helpDayNumbers; j++) {
-                dates.add(startDate.plusDays(j));
+                dates.add(reservations.get(i).getStartDate().plusDays(j));
             }
             if (dates.contains(startDate)) {
                 return true;
@@ -117,15 +109,6 @@ public class ReservationService {
             }
         }
         return false;
-    }
-
-    private boolean reservationIsValid(Long reservationId) {
-        Reservation reservation = findReservationById(reservationId);
-        if (reservation.isDeleted()) {
-            throw new ReservationAlreadyDeletedException(reservationId);
-        } else {
-            return true;
-        }
     }
 
     public Reservation findReservationById(Long reservationId) {
