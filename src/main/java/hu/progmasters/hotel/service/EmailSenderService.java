@@ -76,22 +76,7 @@ public class EmailSenderService {
         mailSender.send(email);
     }
 
-//    public void sendEmail(ReservationRequest request,
-//                          byte[] attachment,
-//                          String attachmentName) throws MessagingException, MailSendException {
-//
-//        MimeMessage email = mailSender.createMimeMessage();
-//        MimeMessageHelper helper = new MimeMessageHelper(email, true, StandardCharsets.UTF_8.name());
-//
-//        helper.setTo(request.getToEmail());
-//        helper.setSubject(request.getGuestName() + "'s reservation info");
-//        helper.setText(request.getBody());
-//        helper.addAttachment(attachmentName, new ByteArrayResource(attachment));
-//
-//        mailSender.send(email);
-//        String currentTime = new Timestamp(System.currentTimeMillis()).toString();
-//        return new EmailResponse(email.getSubject(), currentTime);
-//    }
+
 
     private byte[] generateAttachment(UserRegistrationForm form) {
         String title = "User Information for " + form.getUserName();
