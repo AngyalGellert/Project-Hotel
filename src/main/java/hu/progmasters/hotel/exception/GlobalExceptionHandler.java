@@ -138,6 +138,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, status);
 
     }
+    @ExceptionHandler(ReservationConflictException.class)
+    public ResponseEntity<ApiError> handleReservationConflictException(ReservationConflictException exception) {
+        logger.error("ReservationConflictException: ", exception);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        ApiError body = new ApiError("Reservation_Conflict", "Reservation conflicts with one or more existing reservations.", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, status);
+
+    }
 
     @ExceptionHandler(EmailAlreadyInUseException.class)
     public ResponseEntity<ApiError> emailAlreadyInUse(EmailAlreadyInUseException emailAlreadyInUseException) {

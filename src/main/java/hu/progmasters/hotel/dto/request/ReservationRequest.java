@@ -2,7 +2,9 @@ package hu.progmasters.hotel.dto.request;
 
 import lombok.Data;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -12,7 +14,7 @@ public class ReservationRequest {
     private String guestName;
     @FutureOrPresent(message = "Date must be present date or in the future")
     private LocalDate startDate;
-    @Future(message = "Date must in the future")
+    @FutureOrPresent(message = "Date must in the future")
     private LocalDate endDate;
     @NotNull(message = "Must not be null")
     private Long roomId;
