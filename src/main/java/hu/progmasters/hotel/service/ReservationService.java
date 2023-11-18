@@ -1,6 +1,5 @@
 package hu.progmasters.hotel.service;
 
-import ch.qos.logback.core.joran.conditional.IfAction;
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
@@ -19,6 +18,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,10 +36,31 @@ public class ReservationService {
 
     public ReservationDetails recordsReservation(@Valid ReservationRequest reservation) {
         Room room = roomService.findRoomById(reservation.getRoomId());
+        if (reservationDateValidate(reservation.getRoomId(),reservation.getStartDate(), reservation.getEndDate())) {
+            throw new ReservationConflictException("Dátumok ütköznek a már foglalt dátumokkal");
+        }
         Reservation newReservation = modelMapper.map(reservation, Reservation.class);
         newReservation.setRoom(room);
         Reservation saved = reservationRepository.save(newReservation);
         return modelMapper.map(saved, ReservationDetails.class);
+    }
+
+    private boolean reservationDateValidate(Long roomId, LocalDate startDate, LocalDate endDate) {
+        List<Reservation> reservations = reservationRepository.findConflictingReservations(roomId);
+        for (int i = 0; i < reservations.size(); i++) {
+            int helpDayNumbers = (int) ChronoUnit.DAYS.between(startDate, endDate);
+            List<LocalDate> dates = new ArrayList<>();
+            for (int j = 0; j < helpDayNumbers; j++) {
+                dates.add(startDate.plusDays(j));
+            }
+            if (dates.contains(startDate)) {
+                return true;
+            }
+            if (dates.contains(endDate)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ReservationDeletedResponse reservationDelete(Long id) {
@@ -54,6 +76,9 @@ public class ReservationService {
 
     public ReservationDetails updateReservation(ReservationModificationRequest request) {
         Reservation reservation = findReservationById(request.getId());
+        if (reservationUpdateDateValidate(reservation.getId(),reservation.getRoom().getId(), request.getStartDate(), request.getEndDate())) {
+        }
+
         if (!reservation.isDeleted()) {
             if (!request.getGuestName().isBlank()) {
                 reservation.setGuestName(request.getGuestName());
@@ -71,6 +96,29 @@ public class ReservationService {
         return modelMapper.map(reservation, ReservationDetails.class);
     }
 
+    private boolean reservationUpdateDateValidate(Long reservationId, Long roomId, LocalDate startDate, LocalDate endDate) {
+        List<Reservation> reservations = reservationRepository.findConflictingReservations(roomId);
+        for (int i = 0; i < reservations.size(); i++) {
+            if (reservations.get(i).getId() == reservationId) {
+                reservations.remove(i);
+            }
+        }
+        for (int i = 0; i < reservations.size(); i++) {
+            int helpDayNumbers = (int) ChronoUnit.DAYS.between(startDate, endDate);
+            List<LocalDate> dates = new ArrayList<>();
+            for (int j = 0; j < helpDayNumbers; j++) {
+                dates.add(startDate.plusDays(j));
+            }
+            if (dates.contains(startDate)) {
+                return true;
+            }
+            if (dates.contains(endDate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean reservationIsValid(Long reservationId) {
         Reservation reservation = findReservationById(reservationId);
         if (reservation.isDeleted()) {
@@ -85,52 +133,4 @@ public class ReservationService {
         return reservation.orElseThrow(() -> new ReservationNotFoundException(reservationId));
     }
 
-    public void reserveRoom(ReservationRequest reservationRequest) {
-        List<Reservation> conflictingReservations = reservationRepository.findConflictingReservations(
-                reservationRequest.getRoomId(),
-                reservationRequest.getStartDate(),
-                reservationRequest.getEndDate()
-        );
-
-        if (validateDate(reservationRequest, conflictingReservations)) {
-            Room room = roomService.findRoomById(reservationRequest.getRoomId());
-            Reservation newReservation = convertToEntity(reservationRequest, room);
-            reservationRepository.save(newReservation);
-        } else {
-            throw new ReservationConflictException("The reservation conflicts with another reservation.");
-        }
-    }
-
-    private Reservation convertToEntity(ReservationRequest reservationRequest, Room room) {
-        Reservation reservation = new Reservation();
-        reservation.setRoom(room);
-        reservation.setStartDate(reservationRequest.getStartDate());
-        reservation.setEndDate(reservationRequest.getEndDate());
-        reservation.setGuestName(reservationRequest.getGuestName());
-        return reservation;
-    }
-
-    private boolean hasOverlap(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
-        return start1.isBefore(end2) && end1.isAfter(start2);
-    }
-
-    private boolean validateDate(ReservationRequest request, List<Reservation> reservations) {
-        for (int i = 0; i < reservations.size(); i++) {
-            Reservation existingReservation = reservations.get(i);
-
-            if (hasOverlap(
-                    request.getStartDate(),
-                    request.getEndDate(),
-                    existingReservation.getStartDate(),
-                    existingReservation.getEndDate()
-            )) {
-                return false;
-            }
-        }
-        LocalDate today = LocalDate.now();
-        if (request.getStartDate().isBefore(today) || request.getEndDate().isBefore(today)) {
-           return false;
-        }
-        return true;
-    }
 }
