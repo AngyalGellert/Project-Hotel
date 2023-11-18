@@ -2,7 +2,9 @@ package hu.progmasters.hotel.domain;
 
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,7 +13,8 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Hotel {
 
     @Id

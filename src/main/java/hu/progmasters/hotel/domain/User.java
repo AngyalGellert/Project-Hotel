@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,5 +37,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private List<Reservation> reservations;
 
 }

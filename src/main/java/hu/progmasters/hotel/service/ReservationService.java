@@ -2,6 +2,7 @@ package hu.progmasters.hotel.service;
 
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
+import hu.progmasters.hotel.domain.User;
 import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
 import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.response.ReservationDeletedResponse;
@@ -27,18 +28,23 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final RoomService roomService;
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
 
     public ReservationDetails recordsReservation(@Valid ReservationRequest request) {
+        User userForThisReservation = userService.findUserById(request.getUserId());
         Room roomForThisReservation = roomService.findRoomById(request.getRoomId());
         if (roomForThisReservation.isDeleted()) {
             throw new RoomAlreadyDeletedException(request.getRoomId());
         } else {
             Reservation reservation = modelMapper.map(request, Reservation.class);
             reservation.setRoom(roomForThisReservation);
+            reservation.setUser(userForThisReservation);
+            reservation.setGuestName(userForThisReservation.getUserName());
             ReservationDetails result = modelMapper.map(reservationRepository.save(reservation), ReservationDetails.class);
             result.setRoomName(roomForThisReservation.getName());
+            result.setGuestEmail(userForThisReservation.getEmail());
             return result;
         }
     }
@@ -58,9 +64,6 @@ public class ReservationService {
         Reservation reservation = findReservationById(request.getId());
         if (!reservation.getRoom().isDeleted()) {
             if (reservationIsNotDeleted(reservation)) {
-                if (!request.getGuestName().isBlank()) {
-                    reservation.setGuestName(request.getGuestName());
-                }
                 if (request.getStartDate() != null) {
                     reservation.setStartDate(request.getStartDate());
                 }
@@ -74,7 +77,10 @@ public class ReservationService {
         } else {
             throw new RoomAlreadyDeletedException(reservation.getRoom().getId());
         }
-        return modelMapper.map(reservation, ReservationDetails.class);
+        ReservationDetails result = modelMapper.map(reservation, ReservationDetails.class);
+        result.setRoomName(reservation.getRoom().getName());
+        result.setGuestEmail(reservation.getUser().getEmail());
+        return result;
     }
 
     private boolean reservationIsNotDeleted(Reservation reservation) {

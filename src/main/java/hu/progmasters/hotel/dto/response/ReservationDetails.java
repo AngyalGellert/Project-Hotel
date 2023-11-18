@@ -14,9 +14,9 @@ import java.time.LocalDate;
 public class ReservationDetails {
 
     private Long id;
-    private String guestName;
     private LocalDate startDate;
     private LocalDate endDate;
     private String roomName;
-
+    private String guestName;
+    private String guestEmail;
 }
