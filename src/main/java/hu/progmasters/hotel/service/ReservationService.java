@@ -38,16 +38,16 @@ public class ReservationService {
     private final ModelMapper modelMapper;
 
 
-    public ReservationDetails recordsReservation(@Valid ReservationRequest reservation) {
-        Room room = roomService.findRoomById(reservation.getRoomId());
+    public ReservationDetails recordsReservation(@Valid ReservationRequest request) {
+        Room room = roomService.findRoomById(request.getRoomId());
         User userForThisReservation = userService.findUserById(request.getUserId());
         if (room.isDeleted()) {
-            throw new RoomAlreadyDeletedException(reservation.getRoomId());
+            throw new RoomAlreadyDeletedException(request.getRoomId());
         } else {
-        if (reservationDateValidate(reservation.getRoomId(),reservation.getStartDate(), reservation.getEndDate())) {
+        if (reservationDateValidate(request.getRoomId(),request.getStartDate(), request.getEndDate())) {
             throw new ReservationConflictException("Dátumok ütköznek a már foglalt dátumokkal");
         }
-            Reservation reservation = modelMapper.map(reservation, Reservation.class);
+            Reservation reservation = modelMapper.map(request, Reservation.class);
             reservation.setRoom(room);
             reservation.setUser(userForThisReservation);
             reservation.setGuestName(userForThisReservation.getUserName());
