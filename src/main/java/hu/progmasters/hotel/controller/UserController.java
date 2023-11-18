@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<UserInfo> registrationUser(@RequestBody @Valid UserRegistrationForm userRegistrationForm) {
+    public ResponseEntity<UserInfo> registrationUser(@RequestBody @Valid UserRegistrationForm userRegistrationForm) throws Exception {
         log.info("HTTP request, Post registration, body: " + userRegistrationForm.toString());
         UserInfo userInfo = userService.registrationUser(userRegistrationForm);
         return new ResponseEntity<>(userInfo, HttpStatus.OK);

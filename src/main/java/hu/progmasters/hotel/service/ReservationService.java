@@ -33,6 +33,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final RoomService roomService;
     private final ModelMapper modelMapper;
+    private final EmailSenderService senderService;
 
 
     public ReservationDetails recordsReservation(@Valid ReservationRequest reservation) {
