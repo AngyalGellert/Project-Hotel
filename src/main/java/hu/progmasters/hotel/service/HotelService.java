@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +31,14 @@ public class HotelService {
     private final RoomService roomService;
     private final RoomRepository roomRepository;
     private final ModelMapper modelMapper;
+    private final OpenWeatherService openWeatherService;
 
-    public HotelService(HotelRepository hotelRepository, RoomService roomService, RoomRepository roomRepository) {
+    public HotelService(HotelRepository hotelRepository, RoomService roomService, RoomRepository roomRepository,
+                        OpenWeatherService openWeatherService) {
         this.hotelRepository = hotelRepository;
         this.roomService = roomService;
         this.roomRepository = roomRepository;
+        this.openWeatherService = openWeatherService;
         this.modelMapper = new ModelMapper();
     }
 
@@ -49,7 +53,7 @@ public class HotelService {
 
     public HotelAndRoomInfo addRoomToHotel(HotelAndRoom hotelAndRoom) {
         Hotel hotel = findHotelById(hotelAndRoom.getHotelId());
-        Room room =  roomService.findRoomById(hotelAndRoom.getRoomId());
+        Room room = roomService.findRoomById(hotelAndRoom.getRoomId());
         room.setHotel(hotel);
         roomRepository.save(room);
         return new HotelAndRoomInfo(hotel, room);
@@ -80,15 +84,35 @@ public class HotelService {
         for (Hotel hotel : hotels) {
             HotelDetails hotelDetails = modelMapper.map(hotel, HotelDetails.class);
             hotelDetails.setNumberOfRooms(roomRepository.numberOfAvailableRooms(hotel.getId()));
+            try {
+                hotelDetails.setTemperature(openWeatherService.currentWeatherInfo(hotel.getCity()).getTemperature());
+                hotelDetails.setWeatherDescription(openWeatherService.currentWeatherInfo(hotel.getCity()).getWeatherDescription());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             hotelDetailsList.add(hotelDetails);
         }
         return hotelDetailsList;
     }
 
-    public boolean checkIfHotelAlreadyExistsByName(String hotelName){
+    public boolean checkIfHotelAlreadyExistsByName(String hotelName) {
         if (hotelRepository.findHotelByName(hotelName) != null) {
             return true;
         }
         return false;
     }
+
+    public HotelDetails getDetailsFromTheHotel(Long hotelId) {
+        Hotel hotel = findHotelById(hotelId);
+        HotelDetails hotelDetails = modelMapper.map(hotel, HotelDetails.class);
+        try {
+            HotelDetails weatherInfo = openWeatherService.currentWeatherInfo(hotel.getCity());
+            hotelDetails.setTemperature(weatherInfo.getTemperature());
+            hotelDetails.setWeatherDescription(weatherInfo.getWeatherDescription());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return hotelDetails;
+    }
+
 }

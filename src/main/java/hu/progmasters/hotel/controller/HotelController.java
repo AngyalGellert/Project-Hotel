@@ -28,7 +28,7 @@ public class HotelController {
     }
 
     @PostMapping
-    public ResponseEntity<HotelCreationResponse> createHotel(@RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
+    public ResponseEntity<HotelCreationResponse> createHotel(@ModelAttribute @RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
         log.info("Http request, POST /api/hotels, body: " + hotelCreateRequest.toString());
         HotelCreationResponse hotelCreationResponse = hotelService.createHotel(hotelCreateRequest);
         return new ResponseEntity<>(hotelCreationResponse, HttpStatus.CREATED);
@@ -54,6 +54,13 @@ public class HotelController {
         log.info("HTTP GET request to api/hotels/listAllHotels");
         List<HotelDetails> listedHotelDetails = hotelService.listHotelDetails();
         return new ResponseEntity<>(listedHotelDetails, HttpStatus.OK);
+    }
+
+    @GetMapping("/getDetails/{hotelId}")
+    public ResponseEntity<HotelDetails> getDetailsOfAHotel (@PathVariable("hotelId") Long hotelId) {
+        log.info("HTTP GET request to api/hotels/getDetails/{hotelId} with variable: " + hotelId);
+        HotelDetails hotelDetails = hotelService.getDetailsFromTheHotel(hotelId);
+        return new ResponseEntity<>(hotelDetails, HttpStatus.OK);
     }
 
 }

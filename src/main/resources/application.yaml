@@ -25,6 +25,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: true
 
+openWeather:
+  apiKey: ffbba9b48141d0bdab10f444dfaa2740
+
 logging:
   level:
     com.progmasters: debug

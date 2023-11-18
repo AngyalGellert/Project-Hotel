@@ -25,6 +25,14 @@ public class Hotel {
 
     @NotNull
     @Size(min = 1, max = 200)
+    private String zipCode;
+
+    @NotNull
+    @Size(min = 1, max = 200)
+    private String city;
+
+    @NotNull
+    @Size(min = 1, max = 200)
     private String address;
 
     @OneToMany (mappedBy = "hotel")
