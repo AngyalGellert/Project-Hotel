@@ -2,6 +2,7 @@ package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.request.ImageUpload;
 import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.dto.response.HotelCreationResponse;
 import hu.progmasters.hotel.dto.response.HotelDetails;
@@ -28,7 +29,7 @@ public class HotelController {
     }
 
     @PostMapping
-    public ResponseEntity<HotelCreationResponse> createHotel(@RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
+    public ResponseEntity<HotelCreationResponse> createHotel(@ModelAttribute @RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
         log.info("Http request, POST /api/hotels, body: " + hotelCreateRequest.toString());
         HotelCreationResponse hotelCreationResponse = hotelService.createHotel(hotelCreateRequest);
         return new ResponseEntity<>(hotelCreationResponse, HttpStatus.CREATED);
@@ -56,4 +57,10 @@ public class HotelController {
         return new ResponseEntity<>(listedHotelDetails, HttpStatus.OK);
     }
 
+    @PutMapping("/{hotelId}/uploadImage")
+    public ResponseEntity<HotelDetails> imageUpload(@ModelAttribute @Valid ImageUpload imageUpload, @PathVariable("hotelId") Long hotelId) {
+        log.info("HTTP PUT request to api/hotels/{hotelId}/uploadImage with variable: " + hotelId);
+        HotelDetails hotelDetails = hotelService.uploadImage(hotelId, imageUpload);
+        return new ResponseEntity<>(hotelDetails, HttpStatus.OK);
+    }
 }

@@ -1,9 +1,15 @@
 package hu.progmasters.hotel.dto.request;
 
+import hu.progmasters.hotel.validator.Image;
+import hu.progmasters.hotel.validator.MaxSize;
+import hu.progmasters.hotel.validator.NotEmptyList;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
+
 @Data
 
 public class HotelCreateRequest {
@@ -15,5 +21,10 @@ public class HotelCreateRequest {
     @NotNull(message = "Hotel address must not be empty")
     @Size(min = 1, max = 200, message = "Hotel address must be between 1 and 200 characters")
     private String address;
+
+    @NotEmptyList(message = "Images list must not be empty")
+    @MaxSize(message = "Size max 5MB/file")
+    @Image(message = "Only JPG/PNG/JPEG accepted")
+    private List<MultipartFile> images;
 
 }

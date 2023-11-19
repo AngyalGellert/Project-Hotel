@@ -2,20 +2,21 @@ package hu.progmasters.hotel.domain;
 
 import hu.progmasters.hotel.dto.request.RoomForm;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by szfilep.
- */
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Room {
 
@@ -39,7 +40,8 @@ public class Room {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String imageUrl;
+    @ElementCollection
+    private List<String> imageUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "room")
     private List<Reservation> reservations;
@@ -55,7 +57,6 @@ public class Room {
         this.numberOfBeds = roomForm.getNumberOfBeds();
         this.pricePerNight = roomForm.getPricePerNight();
         this.description = roomForm.getDescription();
-        this.imageUrl = roomForm.getImageUrl();
         this.isDeleted = false;
     }
 }

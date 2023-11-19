@@ -1,14 +1,14 @@
 package hu.progmasters.hotel.service;
 
-import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
-import hu.progmasters.hotel.dto.request.HotelCreateRequest;
-import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
+import hu.progmasters.hotel.dto.request.ImageUpload;
+import hu.progmasters.hotel.dto.request.RoomForm;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
 import hu.progmasters.hotel.dto.response.*;
-import hu.progmasters.hotel.dto.request.RoomForm;
-import hu.progmasters.hotel.exception.*;
+import hu.progmasters.hotel.exception.RoomAlreadyDeletedException;
+import hu.progmasters.hotel.exception.RoomAlreadyExistsException;
+import hu.progmasters.hotel.exception.RoomNotFoundException;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +31,12 @@ public class RoomService {
 
     private final ModelMapper modelMapper;
 
+    private final ImageUploadService imageUploadService;
+
     @Autowired
-    public RoomService(RoomRepository roomRepository) {
+    public RoomService(RoomRepository roomRepository, ImageUploadService imageUploadService) {
         this.roomRepository = roomRepository;
+        this.imageUploadService = imageUploadService;
         this.modelMapper = new ModelMapper();
     }
 
@@ -52,7 +55,12 @@ public class RoomService {
         if (checkIfRoomAlreadyExistsByName(roomForm.getName())) {
             throw new RoomAlreadyExistsException(roomForm.getName());
         } else {
-            return modelMapper.map(roomRepository.save(new Room(roomForm)), RoomDetails.class);
+            Room savedRoom = roomRepository.save(new Room(roomForm));
+            List<String> newUploadedImageUrls = imageUploadService.uploadImages(roomForm.getImages());
+            List<String> currentImageUrls = savedRoom.getImageUrls();
+            currentImageUrls.addAll(newUploadedImageUrls);
+            savedRoom.setImageUrls(currentImageUrls);
+            return modelMapper.map(savedRoom, RoomDetails.class);
         }
     }
 
@@ -66,7 +74,7 @@ public class RoomService {
         item.setName(room.getName());
         item.setNumberOfBeds(room.getNumberOfBeds());
         item.setPricePerNight(room.getPricePerNight());
-        item.setImageUrl(room.getImageUrl());
+        item.setImageUrl(room.getImageUrls());
     }
 
     public RoomDeletionResponse deleteRoom(Long roomId) {
@@ -99,9 +107,11 @@ public class RoomService {
             if (!roomFormUpdate.getDescription().isBlank()) {
                 room.setDescription(roomFormUpdate.getDescription());
             }
-            if (!roomFormUpdate.getImageUrl().isBlank()) {
-                room.setImageUrl(roomFormUpdate.getImageUrl());
-            }
+            List<String> newUploadedImageUrls = imageUploadService.uploadImages(roomFormUpdate.getImages());
+            List<String> currentImageUrls = room.getImageUrls();
+
+            currentImageUrls.addAll(newUploadedImageUrls);
+            room.setImageUrls(currentImageUrls);
             roomRepository.save(room);
 
         }
@@ -142,4 +152,19 @@ public class RoomService {
         return false;
     }
 
+    public RoomDetails uploadImage(Long roomId, ImageUpload imageUpload) {
+        Room room = findRoomById(roomId);
+
+        if (room.isDeleted()){
+            throw new RoomAlreadyDeletedException(roomId);
+        } else {
+            List<String> newUploadedImageUrls = imageUploadService.uploadImages(imageUpload.getImages());
+            List<String> currentImageUrls = room.getImageUrls();
+
+            currentImageUrls.addAll(newUploadedImageUrls);
+            room.setImageUrls(currentImageUrls);
+
+            return modelMapper.map(room, RoomDetails.class);
+        }
+    }
 }

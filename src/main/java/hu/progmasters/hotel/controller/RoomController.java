@@ -1,11 +1,9 @@
 package hu.progmasters.hotel.controller;
 
+import hu.progmasters.hotel.dto.request.ImageUpload;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
-import hu.progmasters.hotel.dto.response.RoomDeletionResponse;
-import hu.progmasters.hotel.dto.response.RoomDetails;
+import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.dto.request.RoomForm;
-import hu.progmasters.hotel.dto.response.RoomDetailsWithReservations;
-import hu.progmasters.hotel.dto.response.RoomListItem;
 import hu.progmasters.hotel.service.RoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * Created by szfilep.
- */
 @RestController
 @RequestMapping("/api/rooms")
 @Slf4j
@@ -51,7 +46,7 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity <RoomDetails> createRoom(@RequestBody @Valid RoomForm roomForm) {
+    public ResponseEntity <RoomDetails> createRoom(@ModelAttribute @RequestBody @Valid RoomForm roomForm) {
         log.info("Http request, Post /api/rooms, body: " + roomForm.toString());
         RoomDetails result = roomService.createRoom(roomForm);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
@@ -65,9 +60,16 @@ public class RoomController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity <RoomDetails> updateRoom(@RequestBody @Valid RoomFormUpdate roomFormUpdate) {
+    public ResponseEntity <RoomDetails> updateRoom(@ModelAttribute @RequestBody @Valid RoomFormUpdate roomFormUpdate) {
         log.info("Http request, Post /api/rooms, body: " + roomFormUpdate.toString());
         return new ResponseEntity<>( roomService.updateRoomValues(roomFormUpdate), HttpStatus.OK);
+    }
+
+    @PutMapping("/{roomId}/uploadImage")
+    public ResponseEntity<RoomDetails> imageUpload(@ModelAttribute @Valid ImageUpload imageUpload, @PathVariable("roomId") Long roomId) {
+        log.info("HTTP PUT request to api/rooms/{roomId}/uploadImage with variable: " + roomId);
+        RoomDetails roomDetails = roomService.uploadImage(roomId, imageUpload);
+        return new ResponseEntity<>(roomDetails, HttpStatus.OK);
     }
 
 }

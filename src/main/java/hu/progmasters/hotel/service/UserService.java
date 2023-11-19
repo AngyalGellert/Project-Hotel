@@ -16,16 +16,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-
+    private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    private EmailSenderService emailSenderService;
 
     @Autowired
     public UserService(UserRepository userRepository, ModelMapper modelMapper,

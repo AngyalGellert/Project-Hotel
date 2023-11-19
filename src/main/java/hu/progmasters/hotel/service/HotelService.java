@@ -5,6 +5,7 @@ import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.request.ImageUpload;
 import hu.progmasters.hotel.dto.response.HotelDetails;
 import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.dto.response.HotelCreationResponse;
@@ -29,12 +30,16 @@ public class HotelService {
     private final HotelRepository hotelRepository;
     private final RoomService roomService;
     private final RoomRepository roomRepository;
+
+    private final ImageUploadService imageUploadService;
     private final ModelMapper modelMapper;
 
-    public HotelService(HotelRepository hotelRepository, RoomService roomService, RoomRepository roomRepository) {
+    public HotelService(HotelRepository hotelRepository, RoomService roomService,
+                        RoomRepository roomRepository, ImageUploadService imageUploadService) {
         this.hotelRepository = hotelRepository;
         this.roomService = roomService;
         this.roomRepository = roomRepository;
+        this.imageUploadService = imageUploadService;
         this.modelMapper = new ModelMapper();
     }
 
@@ -43,6 +48,11 @@ public class HotelService {
             throw new HotelAlreadyExistsException(hotelCreateRequest.getName());
         } else {
             Hotel savedHotel = hotelRepository.save(modelMapper.map(hotelCreateRequest, Hotel.class));
+            List<String> newUploadedImageUrls = imageUploadService.uploadImages(hotelCreateRequest.getImages());
+            List<String> currentImageUrls = savedHotel.getImageUrls();
+
+            currentImageUrls.addAll(newUploadedImageUrls);
+            savedHotel.setImageUrls(currentImageUrls);
             return modelMapper.map(savedHotel, HotelCreationResponse.class);
         }
     }
@@ -91,4 +101,17 @@ public class HotelService {
         }
         return false;
     }
+
+    public HotelDetails uploadImage(Long hotelId, ImageUpload imageUpload) {
+        Hotel hotel = findHotelById(hotelId);
+
+        List<String> newUploadedImageUrls = imageUploadService.uploadImages(imageUpload.getImages());
+        List<String> currentImageUrls = hotel.getImageUrls();
+
+        currentImageUrls.addAll(newUploadedImageUrls);
+        hotel.setImageUrls(currentImageUrls);
+
+        return modelMapper.map(hotel, HotelDetails.class);
+    }
+
 }

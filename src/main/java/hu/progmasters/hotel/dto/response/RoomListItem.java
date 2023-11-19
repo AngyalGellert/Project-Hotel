@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Created by szfilep.
  */
@@ -17,6 +19,6 @@ public class RoomListItem {
     private String name;
     private Integer numberOfBeds;
     private Integer pricePerNight;
-    private String imageUrl;
+    private List<String> imageUrl;
 
 }

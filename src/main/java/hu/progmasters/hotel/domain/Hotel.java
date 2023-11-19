@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,5 +30,8 @@ public class Hotel {
 
     @OneToMany (mappedBy = "hotel")
     private List <Room> roomList;
+
+    @ElementCollection
+    private List<String> imageUrls = new ArrayList<>();
 
 }
