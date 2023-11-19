@@ -128,6 +128,7 @@ public class OpenWeatherService {
 
         List<DailyForecast> dailyForecasts = new ArrayList<>();
         JSONArray jsonArray = jsonObject.getJSONArray("list");
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject dailyWeatherJson = jsonArray.getJSONObject(i);
@@ -143,8 +144,8 @@ public class OpenWeatherService {
 
             DailyForecast dailyForecast = new DailyForecast();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd. - HH:mm");
-            LocalDateTime forecastDateAndTime = LocalDateTime.now().plusHours(3);
-            dailyForecast.setDateAndTime(forecastDateAndTime.format(formatter));
+            currentDateTime = currentDateTime.plusHours(3);
+            dailyForecast.setDateAndTime(currentDateTime.format(formatter));
             dailyForecast.setMinTemp(temperatureMin);
             dailyForecast.setMaxTemp(temperatureMax);
             dailyForecast.setWeatherDescription(description);
