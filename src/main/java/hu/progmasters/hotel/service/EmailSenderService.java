@@ -1,5 +1,6 @@
 package hu.progmasters.hotel.service;
 
+import hu.progmasters.hotel.domain.User;
 import hu.progmasters.hotel.dto.request.UserRegistrationForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -44,6 +45,26 @@ public class EmailSenderService {
         mailSender.send(email);
     }
 
+    public void sendEmail(User user, String link) {
+        String toEmail = user.getEmail();
+        String body = "Dear " + user.getUserName() + "\n" +
+                "\n" +
+                "\n" +
+                "This is new token for new passworn requets. Please click on the link: " + " \n" +
+                link + " \n" +
+                "Thank you!" + "\n" +
+                "\n" +
+                "\n" +
+                "Kind regards," + "\n" +
+                "Team Hotel Middle-earth";
+
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(toEmail);
+        email.setSubject(EMAIL_CONFIRMATION);
+        email.setText(body);
+
+        mailSender.send(email);
+    }
 
 
     public void sendEmail(UserRegistrationForm request,

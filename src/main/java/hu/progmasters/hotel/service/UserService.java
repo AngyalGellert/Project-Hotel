@@ -2,6 +2,7 @@ package hu.progmasters.hotel.service;
 
 
 import hu.progmasters.hotel.config.Role;
+import hu.progmasters.hotel.domain.Token;
 import hu.progmasters.hotel.domain.User;
 import hu.progmasters.hotel.dto.request.UserRegistrationForm;
 import hu.progmasters.hotel.dto.response.UserInfo;
@@ -22,31 +23,43 @@ public class UserService implements UserDetailsService {
     private final ModelMapper modelMapper;
 
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
+    private EmailSenderService emailSenderService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper,
+                       PasswordEncoder passwordEncoder, TokenService tokenService,
+                       EmailSenderService emailSenderService) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
+        this.emailSenderService = emailSenderService;
     }
 
-    public UserInfo registrationUser(UserRegistrationForm userRegistrationForm){
-        if(findUserByEmail(userRegistrationForm.getEmail())){
-           throw new EmailAlreadyInUseException(userRegistrationForm.getEmail());
+    public UserInfo registrationUser(UserRegistrationForm userRegistrationForm) {
+        if (findUserByEmail(userRegistrationForm.getEmail())) {
+            throw new EmailAlreadyInUseException(userRegistrationForm.getEmail());
         }
-        User newUser= new User();
+        User newUser = new User();
         newUser.setUserName(userRegistrationForm.getUserName());
         newUser.setEmail(userRegistrationForm.getEmail());
         newUser.setPassword(passwordEncoder.encode(userRegistrationForm.getPassword()));
         newUser.setRole(Role.ROLE_USER);
         userRepository.save(newUser);
+        Token token = tokenService.generateToken(newUser);
+        newUser.setToken(token);
+        userRepository.save(newUser);
+        String activationLink = "localhost:8080/token/" + token.getToken();
+        System.out.println(activationLink);
+//        emailSenderService.sendEmail(userRegistrationForm, activationLink);
         return modelMapper.map(newUser, UserInfo.class);
     }
 
     private boolean findUserByEmail(String email) {
         User user = userRepository.findByEmail(email);
-        if(user != null){
+        if (user != null) {
             return true;
         }
         return false;
@@ -56,7 +69,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String getEmailAddressFromLoginPage) throws UsernameNotFoundException {
         User usersSearchByEmail = userRepository.findByEmail(getEmailAddressFromLoginPage);
-
+        Token token = usersSearchByEmail.getToken();
         if (usersSearchByEmail == null) {
 
             throw new UsernameNotFoundException(getEmailAddressFromLoginPage);
@@ -64,4 +77,11 @@ public class UserService implements UserDetailsService {
 
         return new UserLogin(usersSearchByEmail);
     }
+
+    public void userActivation(User user){
+        user.setEnable(true);
+        userRepository.save(user);
+    }
+
+
 }

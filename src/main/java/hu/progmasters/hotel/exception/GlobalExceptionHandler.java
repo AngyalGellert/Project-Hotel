@@ -10,6 +10,7 @@ package hu.progmasters.hotel.exception;/*
  */
 
 import com.fasterxml.jackson.core.JsonParseException;
+import hu.progmasters.hotel.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +170,13 @@ public class GlobalExceptionHandler {
         logger.error(exception.getMessage());
         ApiError result = new ApiError("RESERVATION_ALREADY_CREATED", "This reservation already exists", exception.getLocalizedMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<String> tokenException(TokenException exception) {
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("Toekn error", exception.getMessage(), exception.getLocalizedMessage());
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -36,5 +36,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToOne
+    @JoinColumn(name = "token_id")
+    private Token token;
+
+    private boolean isEnable = false;
 
 }
