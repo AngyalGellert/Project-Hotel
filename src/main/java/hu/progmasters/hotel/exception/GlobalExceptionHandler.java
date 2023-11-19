@@ -171,5 +171,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(OpenWeatherException.class)
+    public ResponseEntity<ApiError> handleOpenWeatherException(OpenWeatherException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("OPEN_WEATHER", "Can't send infos about weather information", exception.getLocalizedMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
 }
 

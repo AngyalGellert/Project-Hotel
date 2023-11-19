@@ -5,13 +5,11 @@ import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
-import hu.progmasters.hotel.dto.response.HotelDetails;
-import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
-import hu.progmasters.hotel.dto.response.HotelCreationResponse;
-import hu.progmasters.hotel.dto.response.RoomDetails;
+import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.exception.HotelAlreadyExistsException;
 import hu.progmasters.hotel.exception.HotelHasNoRoomsException;
 import hu.progmasters.hotel.exception.HotelNotFoundException;
+import hu.progmasters.hotel.exception.OpenWeatherException;
 import hu.progmasters.hotel.repository.HotelRepository;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
@@ -110,9 +108,19 @@ public class HotelService {
             hotelDetails.setTemperature(weatherInfo.getTemperature());
             hotelDetails.setWeatherDescription(weatherInfo.getWeatherDescription());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new OpenWeatherException();
         }
         return hotelDetails;
     }
 
+    public ForecastResponse getForecast(Long hotelId) {
+        Hotel hotel = findHotelById(hotelId);
+        ForecastResponse forecastResponse = new ForecastResponse();
+        try {
+            forecastResponse = openWeatherService.getForecast(hotel.getCity());
+        } catch (IOException e) {
+            throw new OpenWeatherException();
+        }
+        return forecastResponse;
+    }
 }
