@@ -16,7 +16,6 @@ import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,19 +30,22 @@ public class OpenWeatherService {
 
     public HotelDetails currentWeatherInfo(String cityName) throws IOException {
 
-        CloseableHttpClient client = HttpClients.createDefault();
-        HotelDetails hotelDetails = new HotelDetails();
+        HotelDetails hotelDetails;
+        CloseableHttpResponse response;
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            hotelDetails = new HotelDetails();
 
-        HttpGet httpGet =
-                new HttpGet(
-                        "https://api.openweathermap.org/data/2.5/weather" +
-                                "?q=" + cityName +
-                                "&appid=" + apiKey +
-                                "&units=metric" +
-                                "&lang=hu"
-                );
+            HttpGet httpGet =
+                    new HttpGet(
+                            "https://api.openweathermap.org/data/2.5/weather" +
+                                    "?q=" + cityName +
+                                    "&appid=" + apiKey +
+                                    "&units=metric" +
+                                    "&lang=hu"
+                    );
 
-        CloseableHttpResponse response = client.execute(httpGet);
+            response = client.execute(httpGet);
+        }
         int statusCode = response.getStatusLine().getStatusCode();
 
         if (statusCode == 200) {
@@ -80,19 +82,22 @@ public class OpenWeatherService {
 
     public ForecastResponse getForecast(String cityName) throws IOException {
 
-        CloseableHttpClient client = HttpClients.createDefault();
-        ForecastResponse forecastResponse = new ForecastResponse();
-        forecastResponse.setCityName(cityName);
+        ForecastResponse forecastResponse;
+        CloseableHttpResponse response;
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            forecastResponse = new ForecastResponse();
+            forecastResponse.setCityName(cityName);
 
-        HttpGet httpGet =
-                new HttpGet(
-                        "https://api.openweathermap.org/data/2.5/forecast" +
-                                "?q=" + cityName +
-                                "&units=metric" +
-                                "&appid=" + apiKey
-                );
+            HttpGet httpGet =
+                    new HttpGet(
+                            "https://api.openweathermap.org/data/2.5/forecast" +
+                                    "?q=" + cityName +
+                                    "&units=metric" +
+                                    "&appid=" + apiKey
+                    );
 
-        CloseableHttpResponse response = client.execute(httpGet);
+            response = client.execute(httpGet);
+        }
         int statusCode = response.getStatusLine().getStatusCode();
 
         if (statusCode == 200) {
@@ -109,7 +114,9 @@ public class OpenWeatherService {
 
             JSONObject jsonObject = new JSONObject(jsonResponse.toString());
 
-            forecastResponse.setForeCast(selectInformationFromResponse(jsonObject));
+            List<DailyForecast> forecastInfos = selectForecastInfos(jsonObject);
+
+            forecastResponse.setForeCast(forecastInfos);
 
             return forecastResponse;
 
@@ -117,7 +124,7 @@ public class OpenWeatherService {
         return forecastResponse;
     }
 
-    private List<DailyForecast> selectInformationFromResponse(JSONObject jsonObject) {
+    private List<DailyForecast> selectForecastInfos(JSONObject jsonObject) {
 
         List<DailyForecast> dailyForecasts = new ArrayList<>();
         JSONArray jsonArray = jsonObject.getJSONArray("list");
