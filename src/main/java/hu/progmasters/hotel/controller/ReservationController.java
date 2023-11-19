@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservation")
@@ -41,5 +42,8 @@ public class ReservationController {
         ReservationDetails result = reservationService.updateReservation(request);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
+    @GetMapping("/list/{id}")
+    public ResponseEntity<List<ReservationDetails>> userReservationList(@PathVariable("id")Long id){
+        return new ResponseEntity<>(reservationService.findReservationByUser(id), HttpStatus.OK);
+    }
 }
