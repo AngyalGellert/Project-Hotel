@@ -2,11 +2,7 @@ package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
-import hu.progmasters.hotel.dto.request.ImageUpload;
-import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
-import hu.progmasters.hotel.dto.response.HotelCreationResponse;
-import hu.progmasters.hotel.dto.response.HotelDetails;
-import hu.progmasters.hotel.dto.response.RoomDetails;
+import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.service.HotelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +25,7 @@ public class HotelController {
     }
 
     @PostMapping
-    public ResponseEntity<HotelCreationResponse> createHotel(@ModelAttribute @RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
+    public ResponseEntity<HotelCreationResponse> createHotel(@RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
         log.info("Http request, POST /api/hotels, body: " + hotelCreateRequest.toString());
         HotelCreationResponse hotelCreationResponse = hotelService.createHotel(hotelCreateRequest);
         return new ResponseEntity<>(hotelCreationResponse, HttpStatus.CREATED);
@@ -63,4 +59,18 @@ public class HotelController {
         HotelDetails hotelDetails = hotelService.uploadImage(hotelId, imageUpload);
         return new ResponseEntity<>(hotelDetails, HttpStatus.OK);
     }
+    @GetMapping("/getDetails/{hotelId}")
+    public ResponseEntity<HotelDetails> getDetailsOfAHotel (@PathVariable("hotelId") Long hotelId) {
+        log.info("HTTP GET request to api/hotels/getDetails/{hotelId} with variable: " + hotelId);
+        HotelDetails hotelDetails = hotelService.getDetailsFromTheHotel(hotelId);
+        return new ResponseEntity<>(hotelDetails, HttpStatus.OK);
+    }
+
+    @GetMapping("/getForecast/{hotelId}")
+    public ResponseEntity<ForecastResponse> getForecastOfAHotel (@PathVariable("hotelId") Long hotelId) {
+        log.info("HTTP GET request to api/hotels/getDetails/{hotelId} with variable: " + hotelId);
+        ForecastResponse forecastResponse = hotelService.getForecast(hotelId);
+        return new ResponseEntity<>(forecastResponse, HttpStatus.OK);
+    }
+
 }

@@ -17,7 +17,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         show_sql: false
@@ -34,6 +34,9 @@ cloudinary:
   cloudName: dvsrsgf1b
   apiKey: 373982796696613
   apiSecret: -kjrYl0BBLsOitvCcxn5pxrd3Rk
+
+openWeather:
+  apiKey: ffbba9b48141d0bdab10f444dfaa2740
 
 logging:
   level:
