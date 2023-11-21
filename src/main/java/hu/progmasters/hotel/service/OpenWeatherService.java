@@ -40,8 +40,7 @@ public class OpenWeatherService {
                             "https://api.openweathermap.org/data/2.5/weather" +
                                     "?q=" + cityName +
                                     "&appid=" + apiKey +
-                                    "&units=metric" +
-                                    "&lang=hu"
+                                    "&units=metric"
                     );
 
             response = client.execute(httpGet);
@@ -49,18 +48,8 @@ public class OpenWeatherService {
         int statusCode = response.getStatusLine().getStatusCode();
 
         if (statusCode == 200) {
-            InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            StringBuilder jsonResponse = new StringBuilder();
-            String line;
 
-            while ((line = reader.readLine()) != null) {
-                jsonResponse.append(line);
-            }
-            inputStreamReader.close();
-            reader.close();
-
-            JSONObject jsonObject = new JSONObject(jsonResponse.toString());
+            JSONObject jsonObject = getJsonObject(response);
 
             JSONObject main = jsonObject.getJSONObject("main");
             double temp = main.getDouble("temp");
@@ -84,7 +73,7 @@ public class OpenWeatherService {
 
         ForecastResponse forecastResponse;
         CloseableHttpResponse response;
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
+        CloseableHttpClient client = HttpClients.createDefault();
             forecastResponse = new ForecastResponse();
             forecastResponse.setCityName(cityName);
 
@@ -97,29 +86,15 @@ public class OpenWeatherService {
                     );
 
             response = client.execute(httpGet);
-        }
+
         int statusCode = response.getStatusLine().getStatusCode();
 
         if (statusCode == 200) {
-            InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            StringBuilder jsonResponse = new StringBuilder();
-            String line;
 
-            while ((line = reader.readLine()) != null) {
-                jsonResponse.append(line);
-            }
-            inputStreamReader.close();
-            reader.close();
-
-            JSONObject jsonObject = new JSONObject(jsonResponse.toString());
-
+            JSONObject jsonObject = getJsonObject(response);
             List<DailyForecast> forecastInfos = selectForecastInfos(jsonObject);
-
             forecastResponse.setForeCast(forecastInfos);
-
             return forecastResponse;
-
         }
         return forecastResponse;
     }
@@ -153,6 +128,21 @@ public class OpenWeatherService {
             dailyForecasts.add(dailyForecast);
         }
         return dailyForecasts;
+    }
+
+    private JSONObject getJsonObject(CloseableHttpResponse response) throws IOException {
+        InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
+        BufferedReader reader = new BufferedReader(inputStreamReader);
+        StringBuilder jsonResponse = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            jsonResponse.append(line);
+        }
+        inputStreamReader.close();
+        reader.close();
+
+        return new JSONObject(jsonResponse.toString());
     }
 
 }
