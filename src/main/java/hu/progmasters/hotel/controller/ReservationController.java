@@ -1,5 +1,6 @@
 package hu.progmasters.hotel.controller;
 
+import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
 import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.response.ReservationDeletedResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservation")
@@ -41,5 +43,4 @@ public class ReservationController {
         ReservationDetails result = reservationService.updateReservation(request);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 }

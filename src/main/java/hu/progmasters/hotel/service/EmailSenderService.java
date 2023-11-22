@@ -1,6 +1,7 @@
 package hu.progmasters.hotel.service;
 
 import hu.progmasters.hotel.domain.User;
+import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.request.UserRegistrationForm;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -61,7 +62,7 @@ public class EmailSenderService {
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(toEmail);
-        email.setSubject(EMAIL_CONFIRMATION);
+        email.setSubject(CONFIRMATION_EMAIL);
         email.setText(body);
 
         mailSender.send(email);
@@ -96,6 +97,36 @@ public class EmailSenderService {
 
         mailSender.send(email);
     }
+
+//    public void sendEmail(ReservationRequest form) {
+//        String body = "Dear " + form.getRoomId( + "\n" +
+//                "\n" +
+//                "\n" +
+//                "Thank you for confirming your e-mail address, the registration was successful!" + " \n" +
+//                "In the attached file, you can find your user details. Please check them and let us know if any modification is needed." + " \n" +
+//                "Thank you!" + "\n" +
+//                "\n" +
+//                "\n" +
+//                "Kind regards," + "\n" +
+//                "Team Hotel Middle-earth";
+//
+//        byte[] attachment = generateAttachment(form);
+//
+//        MimeMessage email = null;
+//        try {
+//            email = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(email, true, StandardCharsets.UTF_8.name());
+//
+//            helper.setTo(form.getEmail());
+//            helper.setSubject(WELCOME_EMAIL_REGISTRATION);
+//            helper.setText(body);
+//            helper.addAttachment("User Information.pdf", new ByteArrayResource(attachment));
+//        } catch (MessagingException e) {
+//            throw new RuntimeException("Attachment failed");
+//        }
+//
+//        mailSender.send(email);
+//    }
 
 
 

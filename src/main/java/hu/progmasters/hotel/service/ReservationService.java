@@ -35,7 +35,6 @@ public class ReservationService {
     private final ModelMapper modelMapper;
     private final EmailSenderService senderService;
 
-
     public ReservationDetails recordsReservation(@Valid ReservationRequest reservation) {
         Room room = roomService.findRoomById(reservation.getRoomId());
         if (room.isDeleted()) {

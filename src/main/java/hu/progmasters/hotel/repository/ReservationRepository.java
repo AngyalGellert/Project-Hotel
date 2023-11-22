@@ -18,5 +18,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r WHERE r.room.id = :roomId AND r.startDate >= CURRENT_DATE")
     List<Reservation> findConflictingReservations(@Param("roomId") Long roomId);
-
 }
