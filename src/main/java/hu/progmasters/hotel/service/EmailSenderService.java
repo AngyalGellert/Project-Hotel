@@ -26,6 +26,8 @@ public class EmailSenderService {
     private final String WELCOME_EMAIL_REGISTRATION = "Hotel Middle-earth: Welcome!";
     private final String CONFIRMATION_EMAIL = "Hotel Middle-earth: Confirm your e-mail";
 
+    private final String RESERVATION = "Hotel Middle-earth: Your reservation at ";
+
 
     public void sendRegistrationConfirmationEmail(UserRegistrationForm form, String link) {
         String body = "Dear " + form.getUserName() + "\n" +
@@ -88,7 +90,7 @@ public class EmailSenderService {
             MimeMessageHelper helper = new MimeMessageHelper(email, true, StandardCharsets.UTF_8.name());
 
             helper.setTo(form.getEmail());
-            helper.setSubject(WELCOME_EMAIL_REGISTRATION);
+            helper.setSubject(RESERVATION + form);
             helper.setText(body);
             helper.addAttachment("User Information.pdf", new ByteArrayResource(attachment));
         } catch (MessagingException e) {
@@ -98,35 +100,35 @@ public class EmailSenderService {
         mailSender.send(email);
     }
 
-//    public void sendEmail(ReservationRequest form) {
-//        String body = "Dear " + form.getRoomId( + "\n" +
-//                "\n" +
-//                "\n" +
-//                "Thank you for confirming your e-mail address, the registration was successful!" + " \n" +
-//                "In the attached file, you can find your user details. Please check them and let us know if any modification is needed." + " \n" +
-//                "Thank you!" + "\n" +
-//                "\n" +
-//                "\n" +
-//                "Kind regards," + "\n" +
-//                "Team Hotel Middle-earth";
-//
-//        byte[] attachment = generateAttachment(form);
-//
-//        MimeMessage email = null;
-//        try {
-//            email = mailSender.createMimeMessage();
-//            MimeMessageHelper helper = new MimeMessageHelper(email, true, StandardCharsets.UTF_8.name());
-//
-//            helper.setTo(form.getEmail());
-//            helper.setSubject(WELCOME_EMAIL_REGISTRATION);
-//            helper.setText(body);
-//            helper.addAttachment("User Information.pdf", new ByteArrayResource(attachment));
-//        } catch (MessagingException e) {
-//            throw new RuntimeException("Attachment failed");
-//        }
-//
-//        mailSender.send(email);
-//    }
+    public void sendEmail(ReservationRequest form) {
+        String body = "Dear " + form.getRoomId() + "\n" +
+                "\n" +
+                "\n" +
+                "Thank you for confirming your e-mail address, the registration was successful!" + " \n" +
+                "In the attached file, you can find your user details. Please check them and let us know if any modification is needed." + " \n" +
+                "Thank you!" + "\n" +
+                "\n" +
+                "\n" +
+                "Kind regards," + "\n" +
+                "Team Hotel Middle-earth";
+
+        byte[] attachment = generateAttachment(form);
+
+        MimeMessage email = null;
+        try {
+            email = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(email, true, StandardCharsets.UTF_8.name());
+
+            helper.setTo(form.getEmail());
+            helper.setSubject(WELCOME_EMAIL_REGISTRATION);
+            helper.setText(body);
+            helper.addAttachment("User Information.pdf", new ByteArrayResource(attachment));
+        } catch (MessagingException e) {
+            throw new RuntimeException("Attachment failed");
+        }
+
+        mailSender.send(email);
+    }
 
 
 
