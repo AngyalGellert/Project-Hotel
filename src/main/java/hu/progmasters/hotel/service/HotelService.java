@@ -33,19 +33,20 @@ public class HotelService {
     private final HotelRepository hotelRepository;
     private final RoomService roomService;
     private final RoomRepository roomRepository;
-
     private final ImageUploadService imageUploadService;
     private final ModelMapper modelMapper;
     private final OpenWeatherService openWeatherService;
+    private final OpenCageGeocodingService openCageGeocodingService;
 
     public HotelService(HotelRepository hotelRepository, RoomService roomService,
                         RoomRepository roomRepository, ImageUploadService imageUploadService,
-    OpenWeatherService openWeatherService) {
+                        OpenWeatherService openWeatherService, OpenCageGeocodingService openCageGeocodingService) {
         this.hotelRepository = hotelRepository;
         this.roomService = roomService;
         this.roomRepository = roomRepository;
         this.openWeatherService = openWeatherService;
         this.imageUploadService = imageUploadService;
+        this.openCageGeocodingService = openCageGeocodingService;
         this.modelMapper = new ModelMapper();
     }
 
@@ -149,5 +150,13 @@ public class HotelService {
             throw new OpenWeatherException();
         }
         return forecastResponse;
+    }
+
+    public HotelGeocodingResponse getGeocodingDetails(Long hotelId) {
+        try {
+            return openCageGeocodingService.getGeocodingDetails(findHotelById(hotelId));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

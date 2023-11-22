@@ -2,6 +2,7 @@ package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.request.ImageUpload;
 import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.service.HotelService;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +72,13 @@ public class HotelController {
         log.info("HTTP GET request to api/hotels/getDetails/{hotelId} with variable: " + hotelId);
         ForecastResponse forecastResponse = hotelService.getForecast(hotelId);
         return new ResponseEntity<>(forecastResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/getGeocoding/{hotelId}")
+    public ResponseEntity<HotelGeocodingResponse> getGeocodingDetailsOfAHotel (@PathVariable("hotelId") Long hotelId) {
+        log.info("HTTP GET request to api/hotels/getGeocoding/{hotelId} with variable: " + hotelId);
+        HotelGeocodingResponse hotelGeocodingResponse = hotelService.getGeocodingDetails(hotelId);
+        return new ResponseEntity<>(hotelGeocodingResponse, HttpStatus.OK);
     }
 
 }
