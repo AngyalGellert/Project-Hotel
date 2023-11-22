@@ -16,6 +16,9 @@ import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Service
 @Transactional
@@ -27,14 +30,14 @@ public class OpenCageGeocodingService {
     public HotelGeocodingResponse getGeocodingDetails(Hotel hotel) throws IOException {
         HotelGeocodingResponse geocodingResponse;
         CloseableHttpResponse response;
+        String address = urlCodedAddress(hotel);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             geocodingResponse = new HotelGeocodingResponse();
 
             HttpGet httpGet =
                     new HttpGet(
                             "https://api.opencagedata.com/geocode/v1/json" +
-                                    "?q=" + hotel.getZipCode() + "+" + hotel.getAddress() +
-                                    "+" + hotel.getCity() + "+" +
+                                    "?q=" + address +
                                     "&key=" + apiKey
                     );
 
@@ -75,5 +78,10 @@ public class OpenCageGeocodingService {
         reader.close();
 
         return new JSONObject(jsonResponse.toString());
+    }
+
+    public String urlCodedAddress (Hotel hotel){
+        String address = hotel.getZipCode() +  hotel.getCity() + hotel.getAddress();
+        return URLEncoder.encode(address, StandardCharsets.UTF_8);
     }
 }

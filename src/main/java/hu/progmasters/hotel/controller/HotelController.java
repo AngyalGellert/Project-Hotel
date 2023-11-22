@@ -26,7 +26,7 @@ public class HotelController {
     }
 
     @PostMapping
-    public ResponseEntity<HotelCreationResponse> createHotel(@RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
+    public ResponseEntity<HotelCreationResponse> createHotel(@ModelAttribute @RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
         log.info("Http request, POST /api/hotels, body: " + hotelCreateRequest.toString());
         HotelCreationResponse hotelCreationResponse = hotelService.createHotel(hotelCreateRequest);
         return new ResponseEntity<>(hotelCreationResponse, HttpStatus.CREATED);
