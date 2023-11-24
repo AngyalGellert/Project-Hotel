@@ -38,19 +38,7 @@ public class OpenCageGeocodingService {
 
         HotelGeocodingResponse geocodingResponse;
         CloseableHttpResponse response;
-//        String address = urlCodedAddress(hotel);
-//        try (CloseableHttpClient client = HttpClients.createDefault()) {
-//            geocodingResponse = new HotelGeocodingResponse();
-//
-//            HttpGet httpGet =
-//                    new HttpGet(
-//                            "https://api.opencagedata.com/geocode/v1/json" +
-//                                    "?q=" + address +
-//                                    "&key=" + apiKey
-//                    );
-//
-//            response = client.execute(httpGet);
-//        }
+
         String openCageUrl = String.format("https://api.opencagedata.com/geocode/v1/json?q=%s+%s+%s&key=%s",
                 encodedAddress, encodedZipCode, encodedCityName, apiKey);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
