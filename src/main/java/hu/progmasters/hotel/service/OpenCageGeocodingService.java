@@ -28,21 +28,42 @@ public class OpenCageGeocodingService {
     private String apiKey;
 
     public HotelGeocodingResponse getGeocodingDetails(Hotel hotel) throws IOException {
+        String address = hotel.getAddress();
+        String zipCode = hotel.getZipCode();
+        String cityName = hotel.getCity();
+
+        String encodedAddress = URLEncoder.encode(address, StandardCharsets.UTF_8);
+        String encodedZipCode = URLEncoder.encode(zipCode, StandardCharsets.UTF_8);
+        String encodedCityName = URLEncoder.encode(cityName, StandardCharsets.UTF_8);
+
         HotelGeocodingResponse geocodingResponse;
         CloseableHttpResponse response;
-        String address = urlCodedAddress(hotel);
+//        String address = urlCodedAddress(hotel);
+//        try (CloseableHttpClient client = HttpClients.createDefault()) {
+//            geocodingResponse = new HotelGeocodingResponse();
+//
+//            HttpGet httpGet =
+//                    new HttpGet(
+//                            "https://api.opencagedata.com/geocode/v1/json" +
+//                                    "?q=" + address +
+//                                    "&key=" + apiKey
+//                    );
+//
+//            response = client.execute(httpGet);
+//        }
+        String openCageUrl = String.format("https://api.opencagedata.com/geocode/v1/json?q=%s+%s+%s&key=%s",
+                encodedAddress, encodedZipCode, encodedCityName, apiKey);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             geocodingResponse = new HotelGeocodingResponse();
 
             HttpGet httpGet =
                     new HttpGet(
-                            "https://api.opencagedata.com/geocode/v1/json" +
-                                    "?q=" + address +
-                                    "&key=" + apiKey
+                            openCageUrl
                     );
 
             response = client.execute(httpGet);
         }
+
         int statusCode = response.getStatusLine().getStatusCode();
 
         if (statusCode == 200) {
@@ -55,6 +76,7 @@ public class OpenCageGeocodingService {
             double lat = geometryObject.getDouble("lat");
             double lng = geometryObject.getDouble("lng");
 
+            geocodingResponse.setName(hotel.getName());
             geocodingResponse.setCity(hotel.getCity());
             geocodingResponse.setLongitude(lng);
             geocodingResponse.setLatitude(lat);
