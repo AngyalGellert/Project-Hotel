@@ -40,7 +40,7 @@ openWeather:
 
 logging:
   level:
-    com.progmasters: debug
+    hu.progmasters: info
     org.springframework.web: info
     org.hibernate: error
   pattern:

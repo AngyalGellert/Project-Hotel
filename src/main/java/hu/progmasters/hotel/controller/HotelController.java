@@ -2,6 +2,7 @@ package hu.progmasters.hotel.controller;
 
 import hu.progmasters.hotel.dto.request.HotelAndRoom;
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
+import hu.progmasters.hotel.dto.request.ImageUpload;
 import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.service.HotelService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class HotelController {
     }
 
     @PostMapping
-    public ResponseEntity<HotelCreationResponse> createHotel(@RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
+    public ResponseEntity<HotelCreationResponse> createHotel(@ModelAttribute @RequestBody @Valid HotelCreateRequest hotelCreateRequest) {
         log.info("Http request, POST /api/hotels, body: " + hotelCreateRequest.toString());
         HotelCreationResponse hotelCreationResponse = hotelService.createHotel(hotelCreateRequest);
         return new ResponseEntity<>(hotelCreationResponse, HttpStatus.CREATED);
