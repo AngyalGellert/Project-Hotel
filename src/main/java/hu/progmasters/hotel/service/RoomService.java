@@ -6,6 +6,7 @@ import hu.progmasters.hotel.dto.request.ImageUpload;
 import hu.progmasters.hotel.dto.request.RoomForm;
 import hu.progmasters.hotel.dto.request.RoomFormUpdate;
 import hu.progmasters.hotel.dto.response.*;
+import hu.progmasters.hotel.exception.ProfanityFoundException;
 import hu.progmasters.hotel.exception.RoomAlreadyDeletedException;
 import hu.progmasters.hotel.exception.RoomAlreadyExistsException;
 import hu.progmasters.hotel.exception.RoomNotFoundException;
@@ -33,10 +34,13 @@ public class RoomService {
 
     private final ImageUploadService imageUploadService;
 
+    private final ProfanityFilterService profanityFilter;
+
     @Autowired
-    public RoomService(RoomRepository roomRepository, ImageUploadService imageUploadService) {
+    public RoomService(RoomRepository roomRepository, ImageUploadService imageUploadService, ProfanityFilterService profanityFilter) {
         this.roomRepository = roomRepository;
         this.imageUploadService = imageUploadService;
+        this.profanityFilter = profanityFilter;
         this.modelMapper = new ModelMapper();
     }
 
@@ -52,15 +56,19 @@ public class RoomService {
     }
 
     public RoomDetails createRoom(RoomForm roomForm) {
-        if (checkIfRoomAlreadyExistsByName(roomForm.getName())) {
-            throw new RoomAlreadyExistsException(roomForm.getName());
+        if (profanityFilter.searchForProfanity(roomForm.getDescription()) != -1) {
+            if (checkIfRoomAlreadyExistsByName(roomForm.getName())) {
+                throw new RoomAlreadyExistsException(roomForm.getName());
+            } else {
+                Room savedRoom = roomRepository.save(new Room(roomForm));
+                List<String> newUploadedImageUrls = imageUploadService.uploadImages(roomForm.getImages());
+                List<String> currentImageUrls = savedRoom.getImageUrls();
+                currentImageUrls.addAll(newUploadedImageUrls);
+                savedRoom.setImageUrls(currentImageUrls);
+                return modelMapper.map(savedRoom, RoomDetails.class);
+            }
         } else {
-            Room savedRoom = roomRepository.save(new Room(roomForm));
-            List<String> newUploadedImageUrls = imageUploadService.uploadImages(roomForm.getImages());
-            List<String> currentImageUrls = savedRoom.getImageUrls();
-            currentImageUrls.addAll(newUploadedImageUrls);
-            savedRoom.setImageUrls(currentImageUrls);
-            return modelMapper.map(savedRoom, RoomDetails.class);
+            throw new ProfanityFoundException();
         }
     }
 

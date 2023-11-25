@@ -217,5 +217,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ProfanityFoundException.class)
+    public ResponseEntity<String> tokenException(ProfanityFoundException exception) {
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("Profanity error", exception.getMessage(), exception.getLocalizedMessage());
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }
 
