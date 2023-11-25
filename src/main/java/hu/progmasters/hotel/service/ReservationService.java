@@ -2,6 +2,8 @@ package hu.progmasters.hotel.service;
 
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
+import hu.progmasters.hotel.domain.User;
+import hu.progmasters.hotel.domain.User;
 import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
 import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.response.ReservationDeletedResponse;
@@ -32,21 +34,27 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final RoomService roomService;
+    private final UserService userService;
     private final ModelMapper modelMapper;
     private final EmailSenderService senderService;
 
-    public ReservationDetails recordsReservation(@Valid ReservationRequest reservation) {
-        Room room = roomService.findRoomById(reservation.getRoomId());
+    public ReservationDetails recordsReservation(@Valid ReservationRequest request) {
+        Room room = roomService.findRoomById(request.getRoomId());
+        User userForThisReservation = userService.findUserById(request.getUserId());
         if (room.isDeleted()) {
-            throw new RoomAlreadyDeletedException(reservation.getRoomId());
+            throw new RoomAlreadyDeletedException(request.getRoomId());
         } else {
-        if (reservationDateValidate(reservation.getRoomId(),reservation.getStartDate(), reservation.getEndDate())) {
+        if (reservationDateValidate(request.getRoomId(),request.getStartDate(), request.getEndDate())) {
             throw new ReservationConflictException("Dátumok ütköznek a már foglalt dátumokkal");
         }
-        Reservation newReservation = modelMapper.map(reservation, Reservation.class);
-        newReservation.setRoom(room);
-        Reservation saved = reservationRepository.save(newReservation);
-        return modelMapper.map(saved, ReservationDetails.class);
+            Reservation reservation = modelMapper.map(request, Reservation.class);
+            reservation.setRoom(room);
+            reservation.setUser(userForThisReservation);
+            reservation.setGuestName(userForThisReservation.getUserName());
+            ReservationDetails result = modelMapper.map(reservationRepository.save(reservation), ReservationDetails.class);
+            result.setRoomName(room.getName());
+            result.setGuestEmail(userForThisReservation.getEmail());
+            return result;
         }
     }
 
@@ -73,9 +81,7 @@ public class ReservationService {
         }
 
         if (!reservation.isDeleted()) {
-            if (!request.getGuestName().isBlank()) {
-                reservation.setGuestName(request.getGuestName());
-            }
+            if (reservationIsNotDeleted(reservation)) {
             if (request.getStartDate() != null) {
                 reservation.setStartDate(request.getStartDate());
             }
@@ -86,7 +92,13 @@ public class ReservationService {
         } else {
             throw new ReservationAlreadyDeletedException(reservation.getId());
         }
-        return modelMapper.map(reservation, ReservationDetails.class);
+        } else {
+            throw new RoomAlreadyDeletedException(reservation.getRoom().getId());
+        }
+        ReservationDetails result = modelMapper.map(reservation, ReservationDetails.class);
+        result.setRoomName(reservation.getRoom().getName());
+        result.setGuestEmail(reservation.getUser().getEmail());
+        return result;
     }
 
     private boolean reservationUpdateDateValidate(Long reservationId, Long roomId, LocalDate startDate, LocalDate endDate) {

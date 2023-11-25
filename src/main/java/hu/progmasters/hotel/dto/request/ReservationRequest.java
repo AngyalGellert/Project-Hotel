@@ -10,8 +10,8 @@ import java.time.LocalDate;
 @Data
 public class ReservationRequest {
 
-    @NotBlank
-    private String guestName;
+    @NotNull(message = "User ID must not be null")
+    private Long userId;
     @FutureOrPresent(message = "Date must be present date or in the future")
     private LocalDate startDate;
     @FutureOrPresent(message = "Date must in the future")

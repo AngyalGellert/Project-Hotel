@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,5 +42,7 @@ public class User {
     private Token token;
 
     private boolean isEnable = false;
+    @OneToMany(mappedBy = "user")
+    private List<Reservation> reservations;
 
 }

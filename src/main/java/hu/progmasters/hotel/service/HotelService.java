@@ -10,15 +10,18 @@ import hu.progmasters.hotel.dto.response.HotelDetails;
 import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.dto.response.HotelCreationResponse;
 import hu.progmasters.hotel.dto.response.RoomDetails;
+import hu.progmasters.hotel.dto.response.*;
 import hu.progmasters.hotel.exception.HotelAlreadyExistsException;
 import hu.progmasters.hotel.exception.HotelHasNoRoomsException;
 import hu.progmasters.hotel.exception.HotelNotFoundException;
+import hu.progmasters.hotel.exception.OpenWeatherException;
 import hu.progmasters.hotel.repository.HotelRepository;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,16 +33,20 @@ public class HotelService {
     private final HotelRepository hotelRepository;
     private final RoomService roomService;
     private final RoomRepository roomRepository;
-
     private final ImageUploadService imageUploadService;
     private final ModelMapper modelMapper;
+    private final OpenWeatherService openWeatherService;
+    private final OpenCageGeocodingService openCageGeocodingService;
 
     public HotelService(HotelRepository hotelRepository, RoomService roomService,
-                        RoomRepository roomRepository, ImageUploadService imageUploadService) {
+                        RoomRepository roomRepository, ImageUploadService imageUploadService,
+                        OpenWeatherService openWeatherService, OpenCageGeocodingService openCageGeocodingService) {
         this.hotelRepository = hotelRepository;
         this.roomService = roomService;
         this.roomRepository = roomRepository;
+        this.openWeatherService = openWeatherService;
         this.imageUploadService = imageUploadService;
+        this.openCageGeocodingService = openCageGeocodingService;
         this.modelMapper = new ModelMapper();
     }
 
@@ -90,6 +97,12 @@ public class HotelService {
         for (Hotel hotel : hotels) {
             HotelDetails hotelDetails = modelMapper.map(hotel, HotelDetails.class);
             hotelDetails.setNumberOfRooms(roomRepository.numberOfAvailableRooms(hotel.getId()));
+            try {
+                hotelDetails.setTemperature(openWeatherService.currentWeatherInfo(hotel.getCity()).getTemperature());
+                hotelDetails.setWeatherDescription(openWeatherService.currentWeatherInfo(hotel.getCity()).getWeatherDescription());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             hotelDetailsList.add(hotelDetails);
         }
         return hotelDetailsList;
@@ -114,4 +127,36 @@ public class HotelService {
         return modelMapper.map(hotel, HotelDetails.class);
     }
 
+
+    public HotelDetails getDetailsFromTheHotel(Long hotelId) {
+        Hotel hotel = findHotelById(hotelId);
+        HotelDetails hotelDetails = modelMapper.map(hotel, HotelDetails.class);
+        try {
+            HotelDetails weatherInfo = openWeatherService.currentWeatherInfo(hotel.getCity());
+            hotelDetails.setTemperature(weatherInfo.getTemperature());
+            hotelDetails.setWeatherDescription(weatherInfo.getWeatherDescription());
+        } catch (IOException e) {
+            throw new OpenWeatherException();
+        }
+        return hotelDetails;
+    }
+
+    public ForecastResponse getForecast(Long hotelId) {
+        Hotel hotel = findHotelById(hotelId);
+        ForecastResponse forecastResponse = new ForecastResponse();
+        try {
+            forecastResponse = openWeatherService.getForecast(hotel.getCity());
+        } catch (IOException e) {
+            throw new OpenWeatherException();
+        }
+        return forecastResponse;
+    }
+
+    public HotelGeocodingResponse getGeocodingDetails(Long hotelId) {
+        try {
+            return openCageGeocodingService.getGeocodingDetails(findHotelById(hotelId));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

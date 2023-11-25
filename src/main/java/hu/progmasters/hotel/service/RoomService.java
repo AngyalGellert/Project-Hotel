@@ -140,6 +140,7 @@ public class RoomService {
             for (Reservation reservation : room.getReservations()) {
                 if (!reservation.isDeleted()) {
                     ReservationDetails reservationDetails = modelMapper.map(reservation, ReservationDetails.class);
+                    reservationDetails.setGuestEmail(reservation.getUser().getEmail());
                     reservationDetailsList.add(reservationDetails);
                 }
             }

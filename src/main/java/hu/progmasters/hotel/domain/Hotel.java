@@ -2,7 +2,9 @@ package hu.progmasters.hotel.domain;
 
 import hu.progmasters.hotel.dto.request.HotelCreateRequest;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,7 +14,8 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Hotel {
 
     @Id
@@ -23,6 +26,14 @@ public class Hotel {
     @Size(min = 1, max = 200)
     @Column(unique = true)
     private String name;
+
+    @NotNull
+    @Size(min = 1, max = 200)
+    private String zipCode;
+
+    @NotNull
+    @Size(min = 1, max = 200)
+    private String city;
 
     @NotNull
     @Size(min = 1, max = 200)

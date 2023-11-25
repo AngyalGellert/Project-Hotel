@@ -45,6 +45,12 @@ cloudinary:
   apiKey: 373982796696613
   apiSecret: -kjrYl0BBLsOitvCcxn5pxrd3Rk
 
+openWeather:
+  apiKey: ffbba9b48141d0bdab10f444dfaa2740
+
+openCageGeocoding:
+  apiKey: 0547da32bddd46f69e95997a056ae778
+
 logging:
   level:
     hu.progmasters: debug

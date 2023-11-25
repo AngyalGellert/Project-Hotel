@@ -15,7 +15,7 @@ public class RoomDetailsWithReservations {
     private Integer numberOfBeds;
     private Integer pricePerNight;
     private String description;
-    private String imageUrl;
+    private String imageUrls;
     private List <ReservationDetails> reservationDetails;
 
 }

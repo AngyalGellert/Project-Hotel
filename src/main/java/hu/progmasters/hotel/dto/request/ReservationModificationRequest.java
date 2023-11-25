@@ -13,8 +13,6 @@ public class ReservationModificationRequest {
     @NotNull(message = "ID must not be blank")
     private Long id;
 
-    private String guestName;
-
     private LocalDate startDate;
 
     private LocalDate endDate;

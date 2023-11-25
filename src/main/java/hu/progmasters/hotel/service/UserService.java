@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 public class UserService implements UserDetailsService {
@@ -78,6 +80,11 @@ public class UserService implements UserDetailsService {
         }
 
         return new UserLogin(usersSearchByEmail);
+    }
+
+    public User findUserById(Long userID) {
+        Optional<User> result = userRepository.findById(userID);
+        return result.orElseThrow(() -> new UsernameNotFoundException("User was not found"));
     }
 
     public void userActivation(User user){

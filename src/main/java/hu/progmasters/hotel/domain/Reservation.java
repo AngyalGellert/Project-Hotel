@@ -34,4 +34,7 @@ public class Reservation {
 
     private boolean deleted;
 
+    @ManyToOne
+    private User user;
+
 }
