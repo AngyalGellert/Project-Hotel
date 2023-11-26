@@ -162,7 +162,10 @@ public class HotelService {
 
     public List <HotelGeocodingResponse> getHotelForMap() {
         List <HotelGeocodingResponse> responses = new ArrayList<>();
-        responses.add(getGeocodingDetails((long)1));
+        List <Hotel> hotels = hotelRepository.findAll();
+        for (Hotel hotel : hotels) {
+            responses.add(getGeocodingDetails(hotel.getId()));
+        }
         return responses;
     }
 }

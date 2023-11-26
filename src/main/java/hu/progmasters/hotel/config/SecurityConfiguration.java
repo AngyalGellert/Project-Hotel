@@ -36,6 +36,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and().authorizeRequests()
                 .antMatchers("/index").hasRole("USER")
+//                .antMatchers("/showHotelsOnMap").permitAll() // Engedélyezd mindenki számára
                 .anyRequest().permitAll()
                 .and()
                 .formLogin().loginPage("/login")
