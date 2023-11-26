@@ -10,6 +10,8 @@ server:
       enabled=false:
 
 spring:
+  thymeleaf:
+    prefix: classpath:/templates.auth/
   datasource:
     url: jdbc:mysql://localhost:3306/hotel?serverTimezone=UTC&characterEncoding=utf8
     username: root

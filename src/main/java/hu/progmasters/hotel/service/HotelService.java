@@ -159,4 +159,10 @@ public class HotelService {
             throw new RuntimeException(e);
         }
     }
+
+    public List <HotelGeocodingResponse> getHotelForMap() {
+        List <HotelGeocodingResponse> responses = new ArrayList<>();
+        responses.add(getGeocodingDetails((long)1));
+        return responses;
+    }
 }

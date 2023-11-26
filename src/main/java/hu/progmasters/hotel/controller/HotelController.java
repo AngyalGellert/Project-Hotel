@@ -8,6 +8,7 @@ import hu.progmasters.hotel.service.HotelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -79,6 +80,13 @@ public class HotelController {
         log.info("HTTP GET request to api/hotels/getGeocoding/{hotelId} with variable: " + hotelId);
         HotelGeocodingResponse hotelGeocodingResponse = hotelService.getGeocodingDetails(hotelId);
         return new ResponseEntity<>(hotelGeocodingResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/showHotelsOnMap")
+    public String showHotelsOnMap(Model model) {
+        List<HotelGeocodingResponse> hotels = hotelService.getHotelForMap();
+        model.addAttribute("hotels", hotels);
+        return "hotelmap";
     }
 
 }
