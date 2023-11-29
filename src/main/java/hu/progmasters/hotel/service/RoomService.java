@@ -56,19 +56,18 @@ public class RoomService {
     }
 
     public RoomDetails createRoom(RoomForm roomForm) {
-        if (profanityFilter.searchForProfanity(roomForm.getDescription()) != -1) {
-            if (checkIfRoomAlreadyExistsByName(roomForm.getName())) {
-                throw new RoomAlreadyExistsException(roomForm.getName());
-            } else {
-                Room savedRoom = roomRepository.save(new Room(roomForm));
-                List<String> newUploadedImageUrls = imageUploadService.uploadImages(roomForm.getImages());
-                List<String> currentImageUrls = savedRoom.getImageUrls();
-                currentImageUrls.addAll(newUploadedImageUrls);
-                savedRoom.setImageUrls(currentImageUrls);
-                return modelMapper.map(savedRoom, RoomDetails.class);
-            }
-        } else {
+        if (checkIfRoomAlreadyExistsByName(roomForm.getName())) {
+            throw new RoomAlreadyExistsException(roomForm.getName());
+        } else if (profanityFilter.searchForProfanity(roomForm.getDescription())
+                || profanityFilter.searchForProfanity(roomForm.getName())) {
             throw new ProfanityFoundException();
+        } else {
+            Room savedRoom = roomRepository.save(new Room(roomForm));
+            List<String> newUploadedImageUrls = imageUploadService.uploadImages(roomForm.getImages());
+            List<String> currentImageUrls = savedRoom.getImageUrls();
+            currentImageUrls.addAll(newUploadedImageUrls);
+            savedRoom.setImageUrls(currentImageUrls);
+            return modelMapper.map(savedRoom, RoomDetails.class);
         }
     }
 

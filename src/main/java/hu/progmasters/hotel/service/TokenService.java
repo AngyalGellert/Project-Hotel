@@ -55,6 +55,7 @@ public class TokenService {
             throw  new TokenException("This token has already been used");
         }
         token.getUser().setEnable(true);
+        emailSenderService.sendConfirmedRegistrationEmail(token.getUser());
         tokenRepository.save(token);
     }
 

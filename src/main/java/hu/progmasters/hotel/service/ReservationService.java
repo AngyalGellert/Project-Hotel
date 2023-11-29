@@ -3,7 +3,6 @@ package hu.progmasters.hotel.service;
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.domain.User;
-import hu.progmasters.hotel.domain.User;
 import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
 import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.response.ReservationDeletedResponse;
@@ -36,7 +35,7 @@ public class ReservationService {
     private final RoomService roomService;
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private final EmailSenderService senderService;
+    private final EmailSenderService emailSenderService;
 
     public ReservationDetails recordsReservation(@Valid ReservationRequest request) {
         Room room = roomService.findRoomById(request.getRoomId());
@@ -54,6 +53,7 @@ public class ReservationService {
             ReservationDetails result = modelMapper.map(reservationRepository.save(reservation), ReservationDetails.class);
             result.setRoomName(room.getName());
             result.setGuestEmail(userForThisReservation.getEmail());
+            emailSenderService.sendEmail(room, userForThisReservation);
             return result;
         }
     }
@@ -68,6 +68,7 @@ public class ReservationService {
         if (reservationIsNotDeleted(reservation)) {
             reservation.setDeleted(true);
             reservationRepository.save(reservation);
+            emailSenderService.sendReservationDeletingEmail(reservation.getUser(), reservation.getRoom());
             return modelMapper.map(reservation, ReservationDeletedResponse.class);
         } else {
             throw new ReservationAlreadyDeletedException(id);
@@ -88,6 +89,7 @@ public class ReservationService {
             if (request.getEndDate() != null) {
                 reservation.setEndDate(request.getEndDate());
             }
+            emailSenderService.sendEmail(reservation.getUser(), reservation.getRoom());
             reservationRepository.save(reservation);
         } else {
             throw new ReservationAlreadyDeletedException(reservation.getId());

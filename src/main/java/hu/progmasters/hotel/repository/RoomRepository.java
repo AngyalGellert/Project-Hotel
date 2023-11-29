@@ -1,6 +1,5 @@
 package hu.progmasters.hotel.repository;
 
-import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.domain.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -56,8 +56,7 @@ public class UserService implements UserDetailsService {
         newUser.setToken(token);
         userRepository.save(newUser);
         String activationLink = "localhost:8080/token/" + token.getToken();
-        System.out.println(activationLink);
-        emailSenderService.sendEmail(userRegistrationForm);
+        emailSenderService.sendRegistrationConfirmationEmail(userRegistrationForm, activationLink);
         return modelMapper.map(newUser, UserInfo.class);
     }
 
@@ -89,6 +88,7 @@ public class UserService implements UserDetailsService {
 
     public void userActivation(User user){
         user.setEnable(true);
+        emailSenderService.sendConfirmedRegistrationEmail(user);
         userRepository.save(user);
     }
 
