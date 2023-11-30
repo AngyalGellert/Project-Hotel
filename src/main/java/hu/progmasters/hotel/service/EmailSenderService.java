@@ -3,6 +3,7 @@ package hu.progmasters.hotel.service;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.domain.User;
 import hu.progmasters.hotel.dto.request.UserRegistrationForm;
+import hu.progmasters.hotel.exception.AttachmentFailedException;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -74,7 +75,7 @@ public class EmailSenderService {
             helper.setText(body);
             helper.addAttachment("User Information.pdf", new ByteArrayResource(attachment));
         } catch (MessagingException e) {
-            throw new RuntimeException("Attachment failed");
+            throw new AttachmentFailedException("Attachment could not be added to the email");
         }
 
         mailSender.send(email);
@@ -180,7 +181,7 @@ public class EmailSenderService {
             helper.setText(body);
             helper.addAttachment("User Information.pdf", new ByteArrayResource(attachment));
         } catch (MessagingException e) {
-            throw new RuntimeException("Attachment failed");
+            throw new AttachmentFailedException("Attachment could not be added to the email");
         }
 
         mailSender.send(email);

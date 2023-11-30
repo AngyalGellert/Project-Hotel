@@ -231,5 +231,26 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AttachmentFailedException.class)
+    public ResponseEntity<ApiError> handleAttachmentFailedException(AttachmentFailedException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("ATTACHMENT_FAILED", "Attachment could not be added to the email", exception.getLocalizedMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PdfCouldNotBeSavedException.class)
+    public ResponseEntity<ApiError> handlePdfCouldNotBeSavedException(PdfCouldNotBeSavedException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("PDF_SAVE_ERROR", "PDF File could not be saved", exception.getLocalizedMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PdfGenerationFailedException.class)
+    public ResponseEntity<ApiError> handlePdfGenerationFailedException(PdfGenerationFailedException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("PDF_GENERATION_ERROR", "PDF File could not be generated", exception.getLocalizedMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
 }
 

@@ -1,5 +1,7 @@
 package hu.progmasters.hotel.service;
 
+import hu.progmasters.hotel.exception.PdfCouldNotBeSavedException;
+import hu.progmasters.hotel.exception.PdfGenerationFailedException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -39,7 +41,7 @@ public class PdfBoxService {
             contentStream.showText(content);
             contentStream.endText();
         } catch (Exception e) {
-            throw new RuntimeException("Content creation for the PDF was not successful");
+            throw new PdfGenerationFailedException("Content creation for the PDF was not successful");
         }
 
         // Save the PDF to a byte array
@@ -49,7 +51,7 @@ public class PdfBoxService {
             document.save(savedPdf);
             document.close();
         } catch (IOException e) {
-            throw new RuntimeException("PDF could not be saved to byte array");
+            throw new PdfCouldNotBeSavedException("PDF could not be saved to byte array");
         }
 
         return savedPdf.toByteArray();
