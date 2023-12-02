@@ -43,9 +43,9 @@ public class ReservationService {
         if (room.isDeleted()) {
             throw new RoomAlreadyDeletedException(request.getRoomId());
         } else {
-        if (reservationDateValidate(request.getRoomId(),request.getStartDate(), request.getEndDate())) {
-            throw new ReservationConflictException("Dátumok ütköznek a már foglalt dátumokkal");
-        }
+            if (reservationDateValidate(request.getRoomId(), request.getStartDate(), request.getEndDate())) {
+                throw new ReservationConflictException("Dátumok ütköznek a már foglalt dátumokkal");
+            }
             Reservation reservation = modelMapper.map(request, Reservation.class);
             reservation.setRoom(room);
             reservation.setUser(userForThisReservation);
@@ -77,23 +77,23 @@ public class ReservationService {
 
     public ReservationDetails updateReservation(ReservationModificationRequest request) {
         Reservation reservation = findReservationById(request.getId());
-        if (reservationUpdateDateValidate(reservation.getId(),reservation.getRoom().getId(), request.getStartDate(), request.getEndDate())) {
+        if (reservationUpdateDateValidate(reservation.getId(), reservation.getRoom().getId(), request.getStartDate(), request.getEndDate())) {
             throw new ReservationConflictException("Dátumok ütköznek a már foglalt dátumokkal");
         }
 
         if (!reservation.isDeleted()) {
             if (reservationIsNotDeleted(reservation)) {
-            if (request.getStartDate() != null) {
-                reservation.setStartDate(request.getStartDate());
+                if (request.getStartDate() != null) {
+                    reservation.setStartDate(request.getStartDate());
+                }
+                if (request.getEndDate() != null) {
+                    reservation.setEndDate(request.getEndDate());
+                }
+                emailSenderService.sendEmail(reservation.getUser(), reservation.getRoom());
+                reservationRepository.save(reservation);
+            } else {
+                throw new ReservationAlreadyDeletedException(reservation.getId());
             }
-            if (request.getEndDate() != null) {
-                reservation.setEndDate(request.getEndDate());
-            }
-            emailSenderService.sendEmail(reservation.getUser(), reservation.getRoom());
-            reservationRepository.save(reservation);
-        } else {
-            throw new ReservationAlreadyDeletedException(reservation.getId());
-        }
         } else {
             throw new RoomAlreadyDeletedException(reservation.getRoom().getId());
         }
@@ -129,6 +129,7 @@ public class ReservationService {
         }
         return false;
     }
+
     private boolean reservationIsNotDeleted(Reservation reservation) {
         if (!reservation.isDeleted()) {
             return true;

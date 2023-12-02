@@ -20,7 +20,7 @@ public class TokenService {
     private final TokenRepository tokenRepository;
     private final EmailSenderService emailSenderService;
 
-    private final int EXPIRATION_TIME_IN_MINUTE = 1;
+    private final int EXPIRATION_TIME_IN_MINUTE = 15;
     private final UserRepository userRepository;
 
     @Autowired
