@@ -82,11 +82,4 @@ public class HotelController {
         return new ResponseEntity<>(hotelGeocodingResponse, HttpStatus.OK);
     }
 
-//    @GetMapping("/showHotelsOnMap")
-//    public String showHotelsOnMap(Model model) {
-//        List<HotelGeocodingResponse> hotels = hotelService.getHotelForMap();
-//        model.addAttribute("hotelData", hotels);
-//        return "hotelmap";
-//    }
-
 }

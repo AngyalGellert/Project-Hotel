@@ -11,10 +11,7 @@ import hu.progmasters.hotel.dto.response.HotelAndRoomInfo;
 import hu.progmasters.hotel.dto.response.HotelCreationResponse;
 import hu.progmasters.hotel.dto.response.RoomDetails;
 import hu.progmasters.hotel.dto.response.*;
-import hu.progmasters.hotel.exception.HotelAlreadyExistsException;
-import hu.progmasters.hotel.exception.HotelHasNoRoomsException;
-import hu.progmasters.hotel.exception.HotelNotFoundException;
-import hu.progmasters.hotel.exception.OpenWeatherException;
+import hu.progmasters.hotel.exception.*;
 import hu.progmasters.hotel.repository.HotelRepository;
 import hu.progmasters.hotel.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
@@ -55,11 +52,15 @@ public class HotelService {
             throw new HotelAlreadyExistsException(hotelCreateRequest.getName());
         } else {
             Hotel savedHotel = hotelRepository.save(modelMapper.map(hotelCreateRequest, Hotel.class));
+
             List<String> newUploadedImageUrls = imageUploadService.uploadImages(hotelCreateRequest.getImages());
             List<String> currentImageUrls = savedHotel.getImageUrls();
-
             currentImageUrls.addAll(newUploadedImageUrls);
             savedHotel.setImageUrls(currentImageUrls);
+
+            HotelGeocodingResponse geocodingData = getGeocodingDetails(savedHotel.getId());
+            savedHotel.setLatitude(geocodingData.getLatitude());
+            savedHotel.setLongitude(geocodingData.getLongitude());
             return modelMapper.map(savedHotel, HotelCreationResponse.class);
         }
     }
@@ -101,7 +102,7 @@ public class HotelService {
                 hotelDetails.setTemperature(openWeatherService.currentWeatherInfo(hotel.getCity()).getTemperature());
                 hotelDetails.setWeatherDescription(openWeatherService.currentWeatherInfo(hotel.getCity()).getWeatherDescription());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new OpenWeatherException();
             }
             hotelDetailsList.add(hotelDetails);
         }
@@ -156,7 +157,7 @@ public class HotelService {
         try {
             return openCageGeocodingService.getGeocodingDetails(findHotelById(hotelId));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new GeocodingException();
         }
     }
 

@@ -1,6 +1,8 @@
 package hu.progmasters.hotel.controller;
 
+import hu.progmasters.hotel.domain.Hotel;
 import hu.progmasters.hotel.dto.response.HotelGeocodingResponse;
+import hu.progmasters.hotel.repository.HotelRepository;
 import hu.progmasters.hotel.service.HotelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -14,19 +16,18 @@ import java.util.List;
 @RequestMapping
 @Slf4j
 public class ViewController {
-    private final HotelService hotelService;
+    private final HotelRepository hotelRepository;
 
 
-    public ViewController(HotelService hotelService) {
-        this.hotelService = hotelService;
+    public ViewController(HotelRepository hotelRepository) {
+        this.hotelRepository = hotelRepository;
     }
 
     @GetMapping("/showHotelsOnMap")
     public String showHotelsOnMap(Model model) {
-        List<HotelGeocodingResponse> hotels = hotelService.getHotelForMap();
+        List<Hotel> hotels = hotelRepository.findAll();
         model.addAttribute("hotelData", hotels);
-//        String message = "Hello from backend!";
-//        model.addAttribute("message", message);
+        log.info("HTTP GET request to /showHotelsOnMap");
         return "hotelmap";
     }
 }
