@@ -44,11 +44,10 @@ public class PaypalController {
     @PostMapping("/createorder")
     public ResponseEntity<String> createOrder(@RequestBody CreateOrderRequest request) {
         log.info("Create Order ");
-        orderService.createOrder(request.getUserId(), request.getReservationsId());
-        return new ResponseEntity<>("Done order.", HttpStatus.OK);
+        return new ResponseEntity<>("Done order. "+ orderService.createOrder(request.getUserId(), request.getReservationsId()), HttpStatus.OK);
     }
     @PostMapping("/payment/confirm/{id}")
-    public ResponseEntity<String> createOrder(@PathVariable("id") String uniqueId) {
+    public ResponseEntity<String> confirmOrder(@PathVariable("id") String uniqueId) {
         log.info("Done payment in paypal this uniqueID: " + uniqueId);
         return new ResponseEntity<>("Confirmed payment." + orderService.confirmPayment(uniqueId), HttpStatus.OK);
     }

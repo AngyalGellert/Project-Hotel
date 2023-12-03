@@ -49,7 +49,7 @@ public class OrderService {
         this.reservationRepository = reservationRepository;
     }
 
-    public void createOrder(Long userId, List<Long> reservationIds) {
+    public String createOrder(Long userId, List<Long> reservationIds) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         User user = userService.findUserById(userId);
 //        List<Reservation> reservations = new ArrayList<>();
@@ -70,6 +70,8 @@ public class OrderService {
             reservation.setPurchaseOrder(purchaseOrder);
             reservationRepository.save(reservation);
         }
+        String confirmUrl = "Localhost:8080/paypal/payment/confirm/"+ purchaseOrder.getUniqueId();
+        return confirmUrl;
     }
 
     public String paymentOrder(Long orderId) {
@@ -130,8 +132,6 @@ public class OrderService {
     }
 
     public String jsonString(PurchaseOrder order) {
-        String confirmUrl = "Localhost:8080/paypal/payment/confirm/"+ order.getUniqueId();
-        log.error(confirmUrl);
         String listingItem = listingItems(order);
         String orderJson = "{\"intent\":\"CAPTURE\",\"purchase_units\":[{\"amount\":{\"currency_code\":\"EUR\",\"value\":\""
                 + order.getSumOrder() + "\",\"breakdown\":{\"item_total\":{\"currency_code\":\"EUR\",\"value\":\""
