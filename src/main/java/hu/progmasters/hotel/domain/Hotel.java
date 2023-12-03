@@ -45,4 +45,8 @@ public class Hotel {
     @ElementCollection
     private List<String> imageUrls = new ArrayList<>();
 
+    private double latitude;
+
+    private double longitude;
+
 }

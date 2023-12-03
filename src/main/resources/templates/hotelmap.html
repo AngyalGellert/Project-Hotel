@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hotel Middle-earth</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body, html {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script th:inline="javascript">
+    var hotelData = /*[[${hotelData}]]*/ [];
+
+    var map = L.map('map').setView([47.4979, 19.0402], 10);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    hotelData.forEach(function(hotel) {
+        var marker = L.marker([hotel.latitude, hotel.longitude]).addTo(map);
+
+        var popupContent = '<b>Hotel: </b>' + hotel.name + '<br>' +
+            '<b>City: </b>' + hotel.city + '<br>' +
+            '<b>Address: </b>' + hotel.address;
+
+        marker.bindPopup(popupContent).openPopup();
+    });
+</script>
+
+</body>
+</html>

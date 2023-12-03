@@ -66,6 +66,7 @@ public class OpenCageGeocodingService {
 
             geocodingResponse.setName(hotel.getName());
             geocodingResponse.setCity(hotel.getCity());
+            geocodingResponse.setAddress(hotel.getAddress());
             geocodingResponse.setLongitude(lng);
             geocodingResponse.setLatitude(lat);
 

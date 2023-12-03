@@ -11,6 +11,7 @@ public class HotelGeocodingResponse {
 
     private String name;
     private String city;
+    private String address;
     private double latitude;
     private double longitude;
 
