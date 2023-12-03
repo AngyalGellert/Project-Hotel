@@ -142,4 +142,13 @@ public class ReservationService {
         Optional<Reservation> reservation = reservationRepository.findById(reservationId);
         return reservation.orElseThrow(() -> new ReservationNotFoundException(reservationId));
     }
+
+    public List<ReservationDetails> findReservationByUser(Long id){
+        List<Reservation> reservations = reservationRepository.FindAllUserReservation(id);
+        List<ReservationDetails> reservationDetails = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            reservationDetails.add(modelMapper.map(reservation,ReservationDetails.class));
+        }
+        return reservationDetails;
+    }
 }

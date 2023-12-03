@@ -43,4 +43,8 @@ public class ReservationController {
         ReservationDetails result = reservationService.updateReservation(request);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+    @GetMapping("/list/{id}")
+    public ResponseEntity<List<ReservationDetails>> userReservationList(@PathVariable("id")Long id){
+        return new ResponseEntity<>(reservationService.findReservationByUser(id), HttpStatus.OK);
+    }
 }
