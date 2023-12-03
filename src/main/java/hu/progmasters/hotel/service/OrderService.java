@@ -52,7 +52,6 @@ public class OrderService {
     public String createOrder(Long userId, List<Long> reservationIds) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         User user = userService.findUserById(userId);
-//        List<Reservation> reservations = new ArrayList<>();
 
         for (int i = 0; i < reservationIds.size(); i++) {
             if (userService.containReservation(user, reservationIds.get(i))) {
@@ -61,8 +60,6 @@ public class OrderService {
             }
         }
         purchaseOrder.setUser(user);
-//        cart.setBasket(new ArrayList<>(reservations));
-//        cart.setBasket(reservations);
         purchaseOrder.setSumOrder(orderSum(purchaseOrder));
         purchaseOrder.setUniqueId(String.valueOf(UUID.randomUUID()));
         orderRepository.save(purchaseOrder);
@@ -156,7 +153,6 @@ public class OrderService {
                     throw new RuntimeException("Error while executing request, statusCode: " + statusCode + "message: " + responseString);
                 }
                 responseObject = new JSONObject(responseString);
-                log.info("Paypal: {}", responseObject.getString("id"));
             } catch (IOException e) {
                 log.error("", e);
             }
