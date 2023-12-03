@@ -3,6 +3,7 @@ package hu.progmasters.hotel.service;
 import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.Room;
 import hu.progmasters.hotel.domain.User;
+import hu.progmasters.hotel.domain.User;
 import hu.progmasters.hotel.dto.request.ReservationModificationRequest;
 import hu.progmasters.hotel.dto.request.ReservationRequest;
 import hu.progmasters.hotel.dto.response.ReservationDeletedResponse;
@@ -129,7 +130,6 @@ public class ReservationService {
         }
         return false;
     }
-
     private boolean reservationIsNotDeleted(Reservation reservation) {
         if (!reservation.isDeleted()) {
             return true;
@@ -151,4 +151,22 @@ public class ReservationService {
         }
         return reservationDetails;
     }
+
+    public int sumRoom(Reservation reservation){
+        int sum = getReservationSum(reservation);
+        reservation.setSumReservation(sum);
+        return sum;
+    }
+
+    public int getReservationSum(Reservation reservation) {
+        int sum = (int) (reservation.getRoom().getPricePerNight()* ChronoUnit.DAYS.between(reservation.getStartDate(), reservation.getEndDate()));
+        return sum;
+    }
+
+    public int getReservationDays(Reservation reservation) {
+        int sum = (int) ChronoUnit.DAYS.between(reservation.getStartDate(), reservation.getEndDate());
+        return sum;
+    }
+
+
 }
