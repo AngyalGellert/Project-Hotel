@@ -2,6 +2,7 @@ package hu.progmasters.hotel.service;
 
 
 import hu.progmasters.hotel.config.Role;
+import hu.progmasters.hotel.domain.Reservation;
 import hu.progmasters.hotel.domain.User;
 import hu.progmasters.hotel.dto.request.UserRegistrationForm;
 import hu.progmasters.hotel.dto.response.UserInfo;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,4 +73,14 @@ public class UserService implements UserDetailsService {
         Optional<User> result = userRepository.findById(userID);
         return result.orElseThrow(() -> new UsernameNotFoundException("User was not found"));
     }
+    public boolean containReservation(User user,Long reservationId){
+        List<Reservation> reservationList = user.getReservations();
+        for (Reservation reservation : reservationList) {
+            if(reservation.getId() == reservationId){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

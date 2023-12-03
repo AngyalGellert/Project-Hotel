@@ -37,4 +37,11 @@ public class Reservation {
     @ManyToOne
     private User user;
 
+    @ManyToOne()
+    private PurchaseOrder purchaseOrder;
+
+    private boolean paid=false;
+
+    private int sumReservation;
+
 }

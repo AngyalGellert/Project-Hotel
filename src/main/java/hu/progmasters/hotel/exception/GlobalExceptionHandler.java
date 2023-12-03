@@ -216,5 +216,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ApiError> handleOrderNotFoundException(OrderNotFoundException exception){
+        logger.error(exception.getMessage());
+        ApiError result = new ApiError("ORDER_NOT_FOUND", "This order does not exist", exception.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
 }
 

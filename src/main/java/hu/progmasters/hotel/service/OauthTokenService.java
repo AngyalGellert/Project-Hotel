@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 
@@ -67,6 +68,8 @@ public class OauthTokenService {
         oauthToken.setToken_type(responseObject.getString("token_type"));
         oauthToken.setApp_id(responseObject.getString("app_id"));
         oauthToken.setExpires_in(responseObject.getInt("expires_in"));
+        oauthToken.setCreatedTime(LocalDateTime.now());
+        oauthToken.setExperiedTime(LocalDateTime.now().plusSeconds(oauthToken.getExpires_in()));
         OauthToken lastToken = oauthTokenRepository.findTopByOrderByIdDesc();
         if (lastToken != null) {
             if (!lastToken.getAccess_token().equals(oauthToken.getAccess_token())) {
@@ -100,6 +103,21 @@ public class OauthTokenService {
             }
         }
         return responseObject;
+    }
+
+    public String getLastToken(){
+        OauthToken lastToken = oauthTokenRepository.findTopByOrderByIdDesc();
+        if(lastToken != null){
+            if(lastToken.getExperiedTime().isAfter(LocalDateTime.now())){
+            return lastToken.getAccess_token();
+            }else{
+                ResponseToken responseToken = requestToken();
+                return responseToken.getAccess_token();
+            }
+        }else{
+            ResponseToken responseToken = requestToken();
+            return responseToken.getAccess_token();
+        }
     }
 
 }
